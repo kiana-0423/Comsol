@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nfm</groupId>
+  <artifactId>comsol-na-stress</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <!-- COMSOL API jars are proprietary and are not available from Maven Central.
+       Use scripts/compile_windows.bat or compile_powershell.ps1 on COMSOL 6.4. -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <!-- Default Maven build checks COMSOL-independent value/path classes only. -->
+          <includes>
+            <include>com/nfm/comsol/config/MaterialConfig.java</include>
+            <include>com/nfm/comsol/config/SimulationConfig.java</include>
+            <include>com/nfm/comsol/util/PathUtils.java</include>
+            <include>com/nfm/comsol/util/ComsolTagUtils.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
