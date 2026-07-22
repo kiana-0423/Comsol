@@ -8,12 +8,15 @@ public final class ParameterBuilder {
         model.param().set("Rp", m.radius(), "Particle radius [provisional]");
         model.param().set("rho_p", m.density(), "Particle density [provisional]");
         model.param().set("Capacity", m.capacity(), "Specific capacity [provisional]");
-        model.param().set("csmax", m.csmax(), "Maximum Na site concentration [provisional]");
+        model.param().set("M_formula", m.molarMass(), "Formula molar mass");
+        model.param().set("csmax", m.csmax(), "Maximum Na site concentration derived from density/molar mass");
         model.param().set("xInitial", Double.toString(m.initialX()), "Initial Na fraction");
         model.param().set("xFinalCharge", Double.toString(m.finalChargeX()), "Charge target: Na1 to Na0.2 means 0.8 removed");
         model.param().set("cs0", "xInitial*csmax", "Initial sodium concentration");
         model.param().set("cRef", "cs0", "Stress-free reference concentration");
-        model.param().set("DsConst", m.diffusivity(), "Solid Na diffusivity [provisional]");
+        model.param().set("DsCharge", m.chargeDiffusivity(), "GITT Na extraction diffusivity");
+        model.param().set("DsDischarge", m.dischargeDiffusivity(), "GITT Na insertion diffusivity");
+        model.param().set("DsConst", m.diffusivityFor(mode), "Direction-specific solid Na diffusivity");
         model.param().set("E_particle", m.youngModulus(), "Young modulus [provisional]");
         model.param().set("nu_particle", Double.toString(m.poissonRatio()), "Poisson ratio [provisional]");
         model.param().set("betaLinear", Double.toString(m.beta()), "Isotropic chemical expansion coefficient [provisional]");
@@ -30,8 +33,9 @@ public final class ParameterBuilder {
         model.param().set("dischargeSign", "1", "PDE inward-source sign: discharge inserts Na");
         model.param().set("runSign", mode.equals("charge") ? "chargeSign" : "dischargeSign", "Active flux sign");
         model.param().set("deltaXCharge", "xInitial-xFinalCharge", "0.8 mol removed for x=1.0 to 0.2");
-        model.param().set("tCharge", "deltaXCharge/C_rate*1[h]", "Theoretical charge duration, not 1/C_rate h");
-        model.param().set("tDischarge", "deltaXCharge/C_rate*1[h]", "Matching discharge duration");
+        model.param().set("tCharge", "deltaXCharge*F_const*csmax*Vp/I_app",
+                "Inventory-consistent time to nominal x=0.2 at the capacity-calibrated current");
+        model.param().set("tDischarge", "tCharge", "Matching inventory-consistent discharge duration");
         model.param().set("gradExponent", Double.toString(m.gradientExponent()), "Radial gradient exponent [sensitivity]");
         model.param().set("DsCore", m.gradientDsCore(), "Core diffusivity [provisional]");
         model.param().set("DsSurface", m.gradientDsSurface(), "Surface diffusivity [provisional]");

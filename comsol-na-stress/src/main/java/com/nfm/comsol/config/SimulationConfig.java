@@ -24,4 +24,13 @@ public record SimulationConfig(
                 stressScaleMin, stressScaleMax, exportFractions, initialStressTolerance,
                 projectRoot, sourceFile, snapshot);
     }
+
+    public SimulationConfig withMaxStepFraction(double fraction) {
+        return new SimulationConfig(comsolVersion, cRates, defaultMode, dischargeInitialization,
+                meshLevel, meshMaxSize, meshMinSize, meshGrowthRate, meshConvergenceTolerance,
+                relativeTolerance, outputFractions, fraction, smokeDuration,
+                smokeMeshSize, outputRoot, concentrationScaleMin, concentrationScaleMax,
+                stressScaleMin, stressScaleMax, exportFractions, initialStressTolerance,
+                projectRoot, sourceFile, snapshot);
+    }
 }

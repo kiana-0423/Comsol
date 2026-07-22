@@ -15,6 +15,10 @@ public final class ResultBuilder {
         expressions.put("time_s", "t/1[s]");
         expressions.put("progress", "if(runSign<0,t/tCharge,t/tDischarge)");
         expressions.put("average_xNa", "ave_particle(xNa)");
+        expressions.put("analytic_average_xNa",
+                "if(runSign<0,xInitial-I_app*t/(F_const*Vp*csmax),xFinalCharge+I_app*t/(F_const*Vp*csmax))");
+        expressions.put("spherical_inventory_relative_error",
+                "abs(ave_particle(xNa)-if(runSign<0,xInitial-I_app*t/(F_const*Vp*csmax),xFinalCharge+I_app*t/(F_const*Vp*csmax)))/max(abs(I_app*t/(F_const*Vp*csmax)),1e-12)");
         expressions.put("surface_xNa", "ave_surface(xNa)");
         expressions.put("center_xNa", "at2(0,0,xNa)");
         expressions.put("surface_center_delta_xNa", "ave_surface(xNa)-at2(0,0,xNa)");

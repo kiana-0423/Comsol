@@ -2,6 +2,7 @@ package com.nfm.comsol.util;
 
 import com.comsol.model.Model;
 import com.nfm.comsol.config.MaterialConfig;
+import com.nfm.comsol.config.FullCellConfig;
 import com.nfm.comsol.config.SimulationConfig;
 
 import java.nio.file.Files;
@@ -19,7 +20,40 @@ public final class ValidationUtils {
         require(List.of("linear", "interpolation", "phase_transition").contains(c.strainMode()), "invalid strain.mode");
         require(c.phaseSmoothingWidth() > 0, "phase.smoothing.width must be positive");
         require(c.gradientExponent() > 0, "gradient.exponent must be positive");
-        require(c.parameterStatus().equalsIgnoreCase("provisional"), "stage-1 parameters must remain marked provisional");
+        require(List.of("provisional", "literature", "measured").contains(c.parameterStatus().toLowerCase()),
+                "parameter.status must be provisional, literature, or measured");
+        require(c.parameterUncertainty() >= 0 && c.parameterUncertainty() <= 1,
+                "parameter.uncertainty must be in [0,1]");
+        require(!c.parameterSource().isBlank(), "parameter.source must not be blank");
+    }
+
+    public static void validateFullCellConfig(FullCellConfig c) {
+        require(c.transferenceNumber() > 0 && c.transferenceNumber() < 1,
+                "electrolyte.transference.number must be in (0,1)");
+        require(c.chargeTransferAlpha() > 0 && c.chargeTransferAlpha() < 1,
+                "kinetics.alpha must be in (0,1)");
+        require(c.negativeInitialX() >= 0 && c.negativeInitialX() <= 1,
+                "negative.initial.x must be in [0,1]");
+        for (double p : List.of(c.anodePorosity(), c.cathodePorosity(), c.separatorPorosity())) {
+            require(p > 0 && p < 1, "porosities must be in (0,1)");
+        }
+        for (double t : List.of(c.anodeTortuosity(), c.cathodeTortuosity(), c.separatorTortuosity())) {
+            require(t >= 1, "tortuosities must be >=1");
+        }
+        require(c.chargeCutoffVoltage() > c.dischargeCutoffVoltage(), "charge cutoff must exceed discharge cutoff");
+        require(c.voltageRmseLimit() > 0 && c.provisionalVoltageRmseLimit() >= c.voltageRmseLimit()
+                        && c.capacityErrorLimit() > 0 && c.massBalanceErrorLimit() > 0,
+                "validation limits must be positive");
+        require(!c.snapshotSocFractions().isEmpty()
+                        && c.snapshotSocFractions().stream().allMatch(v -> v >= 0 && v <= 1),
+                "snapshots.soc.fractions must be in [0,1]");
+        require(c.convergenceAverageConcentrationLimit() > 0
+                        && c.convergenceConcentrationDeltaLimit() > 0
+                        && c.convergenceAverageStressLimit() > 0
+                        && c.convergenceStressP95Limit() > 0,
+                "convergence limits must be positive");
+        require(List.of("provisional", "literature", "measured").contains(c.parameterStatus().toLowerCase()),
+                "full-cell parameter.status must be provisional, literature, or measured");
     }
 
     public static void validateSimulationConfig(SimulationConfig c) {
@@ -50,6 +84,23 @@ public final class ValidationUtils {
         require(domains == 1, "particle domain count must be 1, got " + domains);
         require(axes > 0, "axis boundary selection is empty");
         require(surfaces > 0, "surface boundary selection is empty");
+    }
+
+    public static void validateFullCellModel(Model model) {
+        int positive = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.POSITIVE_PARTICLE).entities(3).length;
+        int negative = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.NEGATIVE_PARTICLES).entities(3).length;
+        int separator = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.SEPARATOR_DOMAIN).entities(3).length;
+        int positiveCollector = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.POSITIVE_COLLECTOR).entities(2).length;
+        int negativeCollector = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.NEGATIVE_COLLECTOR).entities(2).length;
+        require(positive == 1, "full cell must contain exactly one positive particle, got " + positive);
+        require(negative == 4, "full cell must contain four hard-carbon particles, got " + negative);
+        require(separator > 0, "separator selection is empty");
+        require(positiveCollector > 0 && negativeCollector > 0, "current collector boundary selection is empty");
     }
 
     public static void requireFinite(String name, double value) {

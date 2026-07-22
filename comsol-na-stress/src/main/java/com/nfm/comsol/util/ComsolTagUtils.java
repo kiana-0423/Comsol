@@ -25,4 +25,41 @@ public final class ComsolTagUtils {
     public static final String FEATURE_PDE_FLUX = "FluxBoundary";
     public static final String FEATURE_PDE_ZERO_FLUX = "ZeroFluxBoundary";
     public static final String FEATURE_EXTERNAL_STRAIN = "ExternalStrain";
+    public static final String FEATURE_RIGID_MOTION_SUPPRESSION = "RigidMotionSuppression";
+
+    // 3D heterogeneous representative-cell tags. Keep feature type strings here because
+    // Battery Module identifiers are version-sensitive and must be checked against 6.4 GUI export.
+    public static final String FULL_COMPONENT = "comp_full";
+    public static final String FULL_GEOMETRY = "geom_full";
+    public static final String FULL_MESH = "mesh_full";
+    public static final String ANODE_MATRIX = "anode_matrix_domain";
+    public static final String SEPARATOR_DOMAIN = "separator_domain";
+    public static final String CATHODE_MATRIX = "cathode_matrix_domain";
+    public static final String NEGATIVE_PARTICLES = "negative_particle_domains";
+    public static final String POSITIVE_PARTICLE = "positive_particle_domain";
+    public static final String NEGATIVE_SURFACES = "negative_particle_surfaces";
+    public static final String POSITIVE_SURFACE = "positive_particle_surface";
+    public static final String NEGATIVE_COLLECTOR = "negative_collector_boundary";
+    public static final String POSITIVE_COLLECTOR = "positive_collector_boundary";
+    public static final String LATERAL_BOUNDARIES = "lateral_boundaries";
+    public static final String BINDER_DOMAINS = "binder_domains";
+    public static final String FULL_CELL_DOMAINS = "full_cell_domains";
+    public static final String ELECTROLYTE_DOMAINS = "electrolyte_domains";
+    public static final String FULL_BATTERY = "liion";
+    public static final String NEGATIVE_DIFFUSION = "cNa_negative";
+    public static final String POSITIVE_DIFFUSION = "cNa_positive";
+    public static final String FULL_SOLID = "solid_full";
+    public static final String FULL_STUDY_INIT = "study_full_init";
+    public static final String FULL_STUDY_CHARGE = "study_full_charge";
+    public static final String FULL_STUDY_DISCHARGE = "study_full_discharge";
+    public static final String FULL_DATASET_POSITIVE_CUTLINE = "positive_radial_cutline";
+
+    public static final String PHYSICS_LITHIUM_ION_BATTERY = "LithiumIonBattery";
+    public static final String FEATURE_SEPARATOR = "Separator";
+    public static final String FEATURE_POROUS_CONDUCTIVE_BINDER = "PorousConductiveBinder";
+    public static final String FEATURE_INTERNAL_ELECTRODE_SURFACE = "InternalElectrodeSurface";
+    public static final String FEATURE_ELECTRODE_CURRENT = "ElectrodeCurrent";
+    public static final String FEATURE_ELECTRIC_POTENTIAL = "ElectricPotential";
+    public static final String POSITIVE_LOCAL_CURRENT = "liion.ies_pos.er1.iloc";
+    public static final String NEGATIVE_LOCAL_CURRENT = "liion.ies_neg.er1.iloc";
 }

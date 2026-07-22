@@ -8,10 +8,8 @@ import com.nfm.comsol.util.PathUtils;
 public final class DefinitionsBuilder {
     public void build(Model model, MaterialConfig material) {
         java.nio.file.Path data = material.sourceFile().getParent().getParent().resolve("data");
-        createInterpolation(model, "Ds_NFM", material.name().equals("NFM")
-                ? material.diffusionCsv() : data.resolve("ds_nfm_template.csv"));
-        createInterpolation(model, "Ds_NFMZC", material.name().equals("NFMZC")
-                ? material.diffusionCsv() : data.resolve("ds_nfmzc_template.csv"));
+        createInterpolation(model, "Ds_charge", material.chargeDiffusionCsv());
+        createInterpolation(model, "Ds_discharge", material.dischargeDiffusionCsv());
         createInterpolation(model, "strain_NFM", material.name().equals("NFM")
                 ? material.strainCsv() : data.resolve("strain_nfm_template.csv"));
         createInterpolation(model, "strain_NFMZC", material.name().equals("NFMZC")
@@ -23,7 +21,7 @@ public final class DefinitionsBuilder {
         vars.set("xNa", "cNa/csmax", "Normalized Na content");
         vars.set("rNorm", "min(1,sqrt(r^2+z^2)/Rp)", "Normalized radius");
 
-        String dsByX = material.name().equals("NFM") ? "Ds_NFM(xNa)" : "Ds_NFMZC(xNa)";
+        String dsByX = "if(runSign<0,Ds_charge(xNa),Ds_discharge(xNa))";
         String dsBase = material.diffusionMode().equals("interpolation") ? dsByX : "DsConst";
         String ds = material.gradientEnabled()
                 ? "DsCore+(DsSurface-DsCore)*rNorm^gradExponent" : dsBase;

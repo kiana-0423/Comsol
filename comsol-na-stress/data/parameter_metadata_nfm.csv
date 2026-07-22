@@ -1,0 +1,11 @@
+parameter,value,unit,status,source,relative_uncertainty
+formula,NaNi0.2Fe0.4Mn0.4O2,1,measured,supplied requirement,0
+particle_radius,2.5,um,measured,supplied requirement,0.05
+specific_capacity,175,mAh/g,measured,supplied experimental capacity,0.05
+charge_diffusivity,1.08e-13,m2/s,measured,supplied GITT average,0.25
+discharge_diffusivity,1.40e-13,m2/s,measured,supplied GITT average,0.25
+density,4550,kg/m3,provisional,bring-up estimate,0.15
+young_modulus,150,GPa,provisional,bring-up estimate,0.25
+poisson_ratio,0.25,1,provisional,bring-up estimate,0.20
+chemical_expansion_beta,0.01,1,provisional,linear sensitivity placeholder pending XRD,0.30
+exchange_current_density,1,A/m2,provisional,bring-up estimate,0.50

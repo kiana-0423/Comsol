@@ -11,7 +11,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <!-- COMSOL API jars are proprietary and are not available from Maven Central.
-       Use scripts/compile_windows.bat or compile_powershell.ps1 on COMSOL 6.4. -->
+       Use scripts/compile_unix.sh with the COMSOL 6.4 installation on Linux or macOS. -->
   <build>
     <plugins>
       <plugin>
@@ -23,6 +23,7 @@
           <includes>
             <include>com/nfm/comsol/config/MaterialConfig.java</include>
             <include>com/nfm/comsol/config/SimulationConfig.java</include>
+            <include>com/nfm/comsol/config/FullCellConfig.java</include>
             <include>com/nfm/comsol/util/PathUtils.java</include>
             <include>com/nfm/comsol/util/ComsolTagUtils.java</include>
           </includes>

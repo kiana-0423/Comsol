@@ -98,10 +98,15 @@ public final class SimulationRunner {
         double avgX = metrics.value("average_xNa");
         double maxStress = metrics.value("maximum_von_mises_Pa");
         double delta = metrics.value("surface_center_delta_xNa");
+        double inventoryError = metrics.value("spherical_inventory_relative_error");
         double initialStressTolerance = parseLeadingDouble(simulation.initialStressTolerance());
         if (stem.contains("_charge_") && Math.abs(metrics.initialMaximumStress()) > initialStressTolerance) {
             throw new IllegalStateException("Initial stress validation failed: " + metrics.initialMaximumStress()
                     + " Pa exceeds " + simulation.initialStressTolerance());
+        }
+        if (inventoryError > 0.01) {
+            throw new IllegalStateException("Spherical-particle inventory validation failed: "
+                    + inventoryError + " exceeds 1%");
         }
         int elements = model.component(ComsolTagUtils.COMPONENT).mesh(ComsolTagUtils.MESH).getNumElem();
         logger.info("output mph=" + mph + "; output csv=" + metrics.metricsFile() + "; elements=" + elements);
@@ -138,9 +143,10 @@ public final class SimulationRunner {
                 + "; mode=" + o.mode() + "; mesh=" + s.meshLevel());
         log.info("material file=" + m.sourceFile() + "; simulation file=" + s.sourceFile()
                 + "; output=" + s.outputRoot());
-        log.info("key parameters: Rp=" + m.radius() + ", Ds=" + m.diffusivity() + ", E="
+        log.info("key parameters: Rp=" + m.radius() + ", Ds_charge=" + m.chargeDiffusivity()
+                + ", Ds_discharge=" + m.dischargeDiffusivity() + ", E="
                 + m.youngModulus() + ", nu=" + m.poissonRatio() + ", beta=" + m.beta()
-                + ", status=" + m.parameterStatus());
+                + ", status=" + m.parameterStatus() + ", source=" + m.parameterSource());
     }
 
     private void snapshotConfiguration(MaterialConfig m, SimulationConfig s, String stem) throws IOException {
@@ -148,7 +154,10 @@ public final class SimulationRunner {
         Files.createDirectories(dir);
         Files.copy(m.sourceFile(), dir.resolve(m.sourceFile().getFileName()), StandardCopyOption.REPLACE_EXISTING);
         Files.copy(s.sourceFile(), dir.resolve(s.sourceFile().getFileName()), StandardCopyOption.REPLACE_EXISTING);
-        if (m.diffusionMode().equals("interpolation")) Files.copy(m.diffusionCsv(), dir.resolve(m.diffusionCsv().getFileName()), StandardCopyOption.REPLACE_EXISTING);
+        if (m.diffusionMode().equals("interpolation")) {
+            Files.copy(m.chargeDiffusionCsv(), dir.resolve(m.chargeDiffusionCsv().getFileName()), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(m.dischargeDiffusionCsv(), dir.resolve(m.dischargeDiffusionCsv().getFileName()), StandardCopyOption.REPLACE_EXISTING);
+        }
         if (m.strainMode().equals("interpolation")) Files.copy(m.strainCsv(), dir.resolve(m.strainCsv().getFileName()), StandardCopyOption.REPLACE_EXISTING);
     }
 

@@ -1,0 +1,21 @@
+parameter,value,unit,status,source,relative_uncertainty
+anode_length,9,um,provisional,reconstructed representative geometry,0.15
+separator_length,3,um,provisional,reconstructed representative geometry,0.15
+cathode_length,6,um,provisional,reconstructed representative geometry,0.15
+electrolyte_conductivity,1,S/m,provisional,bring-up estimate,0.30
+electrolyte_diffusivity,2e-10,m2/s,provisional,bring-up estimate,0.30
+electrolyte_transference_number,0.45,1,provisional,bring-up estimate,0.20
+hard_carbon_diffusivity,1e-12,m2/s,provisional,bring-up estimate,0.50
+hard_carbon_young_modulus,20,GPa,provisional,bring-up estimate,0.30
+hard_carbon_poisson_ratio,0.25,1,provisional,bring-up estimate,0.20
+binder_conductivity,10,S/m,provisional,bring-up estimate,0.40
+binder_young_modulus,0.1,GPa,provisional,bring-up estimate,0.50
+binder_poisson_ratio,0.30,1,provisional,bring-up estimate,0.20
+separator_young_modulus,0.3,GPa,provisional,bring-up estimate,0.40
+separator_poisson_ratio,0.20,1,provisional,bring-up estimate,0.20
+anode_porosity,0.35,1,provisional,bring-up estimate,0.20
+cathode_porosity,0.35,1,provisional,bring-up estimate,0.20
+separator_porosity,0.45,1,provisional,bring-up estimate,0.15
+anode_tortuosity,2.0,1,provisional,bring-up estimate,0.30
+cathode_tortuosity,2.0,1,provisional,bring-up estimate,0.30
+separator_tortuosity,1.5,1,provisional,bring-up estimate,0.25
