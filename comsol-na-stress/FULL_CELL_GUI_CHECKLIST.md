@@ -1,16 +1,53 @@
-# COMSOL 6.4 full-cell GUI/API verification
+# COMSOL 6.4 三维全电池 GUI / API 核验清单
 
-Run this gate on the target Linux or macOS COMSOL 6.4 installation before accepting any full-cell result.
+本清单只适用于 Linux 和 macOS。完整命令顺序见
+[`COMSOL_6_4_TEST_HANDOFF.md`](COMSOL_6_4_TEST_HANDOFF.md)。任何一项失败都先停止批量计算，
+保留日志和已生成的 `.mph`，修正后从构建检查重新开始。
 
-1. Compile with `scripts/compile_unix.sh`, then run `scripts/run_unix.sh --model full-cell --build-only --material NFM --c-rate 1 --mode cycle`.
-2. If a Battery Module API identifier fails, create the smallest equivalent node in the 6.4 GUI and use **File → Save As → Model File for Java**. Compare only the failing identifier/property with `ComsolTagUtils` and `FullCellPhysicsBuilder`.
-3. Confirm three blocks form one continuous 18 μm representative unit, four hard-carbon particles lie wholly inside the anode without overlap, and the 2.5 μm positive particle lies wholly inside the cathode.
-4. Confirm named selections contain: one positive particle domain, four negative particle domains, one separator domain, nonempty internal particle surfaces, and nonempty opposing collectors.
-5. Confirm `Lithium-Ion Battery (liion)` contains negative/positive Porous Conductive Binder, Separator, two Internal Electrode Surface nodes, negative 0 V potential and positive total current.
-6. Confirm `liion.ies_neg.er1.iloc` and `liion.ies_pos.er1.iloc` exist. Charge must remove Na from the positive particle and insert Na into hard carbon; reverse on discharge.
-7. Confirm positive/negative Coefficient Form PDE fields have concentration units and use the local-current/Faraday surface flux, not a second independent imposed flux.
-8. Confirm Solid Mechanics is restricted to the positive particle. Chemical strain acts only there, and `RigidMotionSuppression` removes rigid-body modes without pinning expansion. Uniform concentration change in the free particle must not create appreciable deviatoric stress.
-9. Confirm current-distribution initialization precedes charge; discharge uses the last charge state. Verify 4.3 V and 2.0 V solver Stop Conditions store the final step. Inspect the time solver and confirm electrochemistry/diffusion precede the displacement field in segregated steps.
-10. Run `--smoke-test`; require successful solve/save/export, decreasing positive `xNa` on charge, initial near-zero stress and finite voltage.
-11. Run mesh and time convergence. Require average `xNa` <1%, maximum concentration delta <2%, maximum volume-average stress <3%, sampled stress p95 <5%, and mass-balance error <1%. Treat the absolute single-node maximum as diagnostic only.
-12. Do not set `parameter.status=measured` or use quantitative stress claims until raw OCV, XRD strain and mechanics data have replaced the templates.
+## A. 参数载入
+
+1. NFM 正极应显示：`E=150 GPa`、`nu=0.30`、`beta=0.012`、`i0=5 A/m^2`。
+2. NFMZC 正极应显示：`E=165 GPa`、`nu=0.30`、`beta=0.008`、`i0=8 A/m^2`。
+3. 正极半径均为 `2.5 um`；NFM/NFMZC 脱钠扩散率分别为 `1.08e-13`、`1.84e-13 m^2/s`，嵌钠扩散率分别为 `1.40e-13`、`2.76e-13 m^2/s`。
+4. 电解液应显示：`c0=1 M`、`D=1.5e-10 m^2/s`、`t+=0.40`，电导率使用 `data/electrolyte_conductivity_parameters_docx.csv`，在 `1 M` 处为 `0.882 S/m`。
+5. 硬碳应显示：`csmax=14.54 kmol/m^3`、`x0=0.007`、`E=15 GPa`、`nu=0.25`、`beta=0.025`，OCV、交换电流和扩散率均来自配置指定的 CSV。
+6. 多孔参数应为：负极/正极/隔膜孔隙率 `0.35/0.30/0.45`，曲折率 `1.69/1.83/1.49`。
+7. `phase.transition.enabled=false`、`gradient.enabled=false`。相变和径向梯度参数只作为后续工况，不得在基准模型中被意外启用。
+
+## B. 几何和选择
+
+1. 三个块体组成连续的 `18 um` 代表性微结构单元；不得称为整枚宏观电芯。
+2. 四个硬碳颗粒完全位于负极内且不重叠；一个半径 `2.5 um` 的正极颗粒完全位于正极内。
+3. 命名选择必须包含：一个正极颗粒域、四个负极颗粒域、一个隔膜域、非空的颗粒内表面以及两侧集流体边界。
+4. 网格必须解析颗粒/粘结剂界面，且没有极小劣质单元导致的孤立应力尖峰。
+
+## C. 电化学与扩散
+
+1. `Lithium-Ion Battery (liion)` 中应有正负极 Porous Conductive Binder、Separator、两个 Internal Electrode Surface、负极 `0 V` 和正极总电流条件。
+2. `liion.ies_neg.er1.iloc` 与 `liion.ies_pos.er1.iloc` 必须存在。充电时正极脱钠、硬碳嵌钠；放电时方向相反。
+3. 正负极颗粒 PDE 的浓度单位正确，表面通量来自局部反应电流除以法拉第常数，不得再叠加独立通量。
+4. 电流分布初始化必须先于充电；放电必须继承充电末态。`4.3 V` 与 `2.0 V` Stop Condition 应保留截止时刻解。
+5. 检查 segregated solver：电化学/扩散先求解，位移场后求解。
+
+## D. 力学
+
+1. Solid Mechanics 仅作用于正极颗粒，化学本征应变也只加载在该域。
+2. `RigidMotionSuppression` 只消除刚体运动，不得固定颗粒外表面或限制自由膨胀。
+3. 初始均匀浓度和完全均匀浓度变化下，von Mises 应力应接近零；否则不得接受后续峰值应力。
+4. NFM/NFMZC 图必须使用相同浓度和应力色标，单节点最大值只作诊断。
+
+## E. 数值与结果门槛
+
+1. smoke test 必须完成建模、网格、求解、保存、CSV 和 PNG 导出；充电时正极平均 `xNa` 下降，电压有限，初始应力接近零。
+2. 相邻网格：平均 `xNa <1%`、最大浓差 `<2%`、体积平均应力最大值 `<3%`、采样应力 `p95 <5%`。
+3. 时间步收敛必须通过项目配置的同类阈值；全周期 Na 物料平衡误差 `<1%`。
+4. 0.1C 与实验曲线比较：provisional 阶段先以 `100 mV` 为警戒线；只有关键参数成为 measured 后，才执行 `50 mV` 正式目标。截止容量偏差目标 `<5%`。
+5. 1C 是独立验证，不得用 0.1C 数据代替。
+6. 敏感性必须使用配置中的三点：NFM/NFMZC 的 `E`、`nu`、`beta`、正极 `i0`；硬碳 `i0` 必须按0.5/3/15 A/m²独立缩放；并覆盖扩散率和粒径。
+7. 归因表必须包含单独替换扩散率、`beta`、杨氏模量、正极动力学、合并力学参数及全部已配置材料差异的工况。
+
+## F. 结论边界
+
+- OCV、XRD 应变和材料力学数据尚未由本项目原始测量替换，因此所有应力绝对值保持 `provisional`。
+- Kang 等（2026）的 NFM 数据可用于方法和数量级核验；其表面 Co 处理 NFMC 参数不得直接赋给体相 Zn/Co 改性的 NFMZC。
+- 程序不得把“NFMZC 应力必须更低”作为通过条件；比较结论只由收敛后的计算结果给出。

@@ -100,7 +100,10 @@ public final class FullCellSimulationRunner {
         manifest.setProperty("sensitivity.modulus.scale", Double.toString(sensitivity.modulusScale()));
         manifest.setProperty("sensitivity.poisson.scale", Double.toString(sensitivity.poissonScale()));
         manifest.setProperty("sensitivity.radius.scale", Double.toString(sensitivity.radiusScale()));
-        manifest.setProperty("sensitivity.kinetics.scale", Double.toString(sensitivity.kineticsScale()));
+        manifest.setProperty("sensitivity.kinetics.positive.scale",
+                Double.toString(sensitivity.positiveKineticsScale()));
+        manifest.setProperty("sensitivity.kinetics.negative.scale",
+                Double.toString(sensitivity.negativeKineticsScale()));
         try (OutputStream out = Files.newOutputStream(dir.resolve("manifest.properties"))) {
             manifest.store(out, "Full-cell run input manifest");
         }
@@ -114,7 +117,10 @@ public final class FullCellSimulationRunner {
     public record SensitivityCase(String name, double chargeDiffusionScale,
                                   double dischargeDiffusionScale, double strainScale,
                                   double modulusScale, double poissonScale,
-                                  double radiusScale, double kineticsScale) {
-        public static SensitivityCase baseline() { return new SensitivityCase("baseline", 1, 1, 1, 1, 1, 1, 1); }
+                                  double radiusScale, double positiveKineticsScale,
+                                  double negativeKineticsScale) {
+        public static SensitivityCase baseline() {
+            return new SensitivityCase("baseline", 1, 1, 1, 1, 1, 1, 1, 1);
+        }
     }
 }

@@ -7,6 +7,8 @@
 
 正式模型只由 Java 与 properties/CSV 生成；GUI 仅用于检查生成的 `.mph`，任何 GUI 修正都必须回写到 Java 后重新生成。
 
+当前工程全部材料、几何、电化学、网格、求解和验收参数及其来源汇总见 [`PROJECT_PARAMETERS.md`](PROJECT_PARAMETERS.md)。
+
 ## 二维单颗粒基准
 
 研究对象为 NFM（NaNi0.2Fe0.4Mn0.4O2）和 NFMZC（NaNi0.185Zn0.015Fe0.4Mn0.37Co0.03O2）半径 2.5 μm 的单个球形颗粒。二维 `r-z` 半圆绕 `r=0` 旋转代表完整球体，能保留球形扩散与轴对称应力，同时远低于三维全电池的计算与参数成本，适合先检查符号、守恒、浓度梯度和化学应变耦合。
@@ -15,7 +17,7 @@
 
 ## 三维异质全电池
 
-`full-cell` 重建需求报告中的三块连续区域和显式颗粒拓扑。Battery Module 在负极/正极多孔导电粘结剂和隔膜中求解电解液传输与电势，内部电极表面使用 Butler–Volmer 动力学；局部反应电流通过 `iloc/F` 转换成正负极颗粒表面 Na 摩尔通量。硬碳颗粒只求电化学与固相扩散；Solid Mechanics 仅作用于研究对象——自由正极颗粒，并用刚体运动抑制消除零能模态。正极浓度单向传递为化学本征应变，不加入缺少偏摩尔体积数据的应力反馈扩散项。
+`full-cell` 是 `representative-microstructure`（代表性微结构单元），重建需求报告中的三块连续区域和显式颗粒拓扑，不代表实际宏观电极厚度。Battery Module 在负极/正极多孔导电粘结剂和隔膜中求解电解液传输与电势，内部电极表面使用 Butler–Volmer 动力学；局部反应电流通过 `iloc/F` 转换成正负极颗粒表面 Na 摩尔通量。硬碳颗粒只求电化学与固相扩散；Solid Mechanics 仅作用于研究对象——自由正极颗粒，并用刚体运动抑制消除零能模态。正极浓度单向传递为化学本征应变，不加入缺少偏摩尔体积数据的应力反馈扩散项。
 
 默认运行顺序为电流分布初始化、2.7–4.3 V 恒流充电、从充电末态继续到 2.0 V 放电。时间求解器使用电压停止条件，而不是把 `xNa=0.2` 强制当作电压条件。准静态力学方程在保存的瞬态状态上求解且不反馈电化学方程；COMSOL 自动求解器应把电化学/扩散与位移放入顺序 segregated steps，首次6.4实机运行必须按核验清单确认该顺序。
 
@@ -84,7 +86,7 @@ scripts/run_unix.sh --model full-cell --c-rate 1 --mode cycle --parameter-attrib
 
 不指定 `--mode` 时，`particle` 默认充电，`full-cell` 默认完整充放电循环。`--all` 对 NFM/NFMZC 执行 0.1C 和 1C。
 
-每次运行先从项目根目录加载配置。`--build-only` 建几何、物理、网格、研究与结果节点并保存 mph，不求解；`--smoke-test` 用 NFM、1C、极短时间和粗网格验证创建、网格、求解、保存、CSV 与 PNG；`--all` 运行两种材料的 0.1C/1C；`--mesh-convergence` 顺序运行 normal/fine/extra_fine，并分别检查平均浓度1%、最大浓度差2%、最大体积平均应力3%和节点采样 `σ95` 5%，单点最大应力只作辅助；`--parameter-attribution` 在共同NFM基准上分离扩散与力学/应变贡献。
+每次运行先从项目根目录加载配置。`--build-only` 建几何、物理、网格、研究与结果节点并保存 mph，不求解；`--smoke-test` 用 NFM、1C、极短时间和粗网格验证创建、网格、求解、保存、CSV 与 PNG；`--all` 运行两种材料的 0.1C/1C；`--mesh-convergence` 顺序运行 normal/fine/extra_fine，并分别检查平均浓度1%、最大浓度差2%、最大体积平均应力3%和节点采样 `σ95` 5%，单点最大应力只作辅助；`--parameter-sensitivity` 独立扫描正极和硬碳界面动力学；`--parameter-attribution` 在共同NFM基准上分别计算扩散、beta、杨氏模量、正极动力学、合并力学以及全部已配置材料差异的贡献。
 
 放电默认先真实求解充电，再把充电末态用作放电初值。COMSOL 6.4 若不接受研究间初值属性，程序会失败并记录异常，不会生成伪放电结果。独立低钠初态尚未实现，选择非 `continue_charge` 会明确抛错。
 
@@ -94,11 +96,15 @@ scripts/run_unix.sh --model full-cell --c-rate 1 --mode cycle --parameter-attrib
 - `config/simulation.properties`：版本、倍率、网格、求解、统一色标和输出。
 - `config/full_cell.properties`：三维几何、硬碳、电解液、多孔介质、截止电压和验收阈值。
 - `data/parameter_metadata_*`：逐参数的值、单位、`measured/literature/provisional` 状态、来源与相对不确定度。
-- `data/ocv_*`、`k_*`、`electrolyte_*`：正负极 OCV、动力学和电解液插值模板。
-- `data/ds_*_template.csv`：`x,value`，扩散率单位 `m²/s`；`diffusion.charge.csv` 与 `diffusion.discharge.csv` 分别配置脱钠/嵌钠曲线。
+- `data/ocv_*`、`k_*`：正负极 OCV 与动力学插值表。
+- `data/electrolyte_conductivity_parameters_docx.csv`：从相似项目参数文档数字化并启用的电解液电导率曲线。
+- `data/ds_nfm*_template.csv`、`data/ds_nfmzc*_template.csv`：`x,value`，正极扩散率单位 `m²/s`；充/放电分别配置脱钠/嵌钠曲线。
+- `data/ds_hard_carbon_parameters_docx.csv`：从相似项目参数文档数字化并启用的硬碳扩散率曲线。
 - `data/strain_*_template.csv`：`x,strain`，应变无量纲。
 
-`diffusion.mode=constant|interpolation`；`strain.mode=linear|interpolation|phase_transition`。选中的 CSV 不存在时配置加载立即失败，不会静默回退。NFM/NFMZC 对比图使用配置中的同一浓度色标（默认 0.2–1.0）和同一应力色标（默认 0–500 MPa）；禁止单图自动缩放后做误导性比较。
+`diffusion.mode=constant|interpolation`；`strain.mode=linear|interpolation|phase_transition`。选中的 CSV 不存在时配置加载立即失败，不会静默回退。NFM/NFMZC 对比图使用配置中的同一浓度色标（默认 0.2–1.0）和同一应力色标（默认 0–1000 MPa）；禁止单图自动缩放后做误导性比较。应力上限与 Kang 等 2026 年论文 Figure 6 的统一色标一致，并覆盖其报道的 NFM 约 597 MPa 峰值；该数值只作外部验证基准，不作为求解输入或强制验收条件。
+
+目标 COMSOL 机器上的固定测试顺序见 [`COMSOL_6_4_TEST_HANDOFF.md`](COMSOL_6_4_TEST_HANDOFF.md)，GUI/API 节点检查见 [`FULL_CELL_GUI_CHECKLIST.md`](FULL_CELL_GUI_CHECKLIST.md)。本工程不提供 Windows 运行入口。
 
 ## 输出与可重复性
 
@@ -141,3 +147,9 @@ scripts/run_unix.sh --model full-cell --c-rate 1 --mode cycle --parameter-attrib
 ## 已知限制与升级路线
 
 当前三维模型仍不包含塑性、断裂、晶体各向异性、真实相变或应力反馈扩散。NFMZC 主计算保持均质有效材料；只有取得径向 EDS/相分布和参数映射后才启用显式梯度。二维单颗粒继续作为三维模型的守恒、符号与网格基准。
+
+## Kang 2026 文献约束的使用边界
+
+Kang 等（Advanced Functional Materials, 2026, DOI: 10.1002/adfm.202531556）的原始 NFM 与本项目 NFM 化学式相同，因此可用来校核 NFM：2.0–4.3 V 测试窗口、约 3.3 V 的 O3→P3 起始、4.25–4.30 V 的高压相区、`Δa=1.83%`、`Δc=3.04%`、平均 `DNa=1.17e-12 m²/s` 的量级，以及约 597 MPa 的有限元峰值应力。晶格变化是各向异性边界，并不等于当前各向同性 `chemical.expansion.beta`；没有电压/SOC 全曲线前不启用定量相变应变。
+
+论文中的 NFMC 是 3 wt% Co 表面处理并形成 P2/O3 重构层和 NaxCoO2 包覆的材料，而本项目 NFMZC 是 Zn/Co 体相掺杂。因此 NFMC 的相比例、扩散提升、晶格变化、循环后阻抗和应力降低均不迁移到 NFMZC。逐项判定保存在 `data/kang_2026_reference_constraints.csv`。

@@ -43,7 +43,7 @@ public final class FullCellBatchRunner {
         for (String level : List.of("normal", "fine", "extra_fine")) {
             results.add(runner.run(material, cell, simulation.withMeshLevel(level),
                     new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
-                    new FullCellSimulationRunner.SensitivityCase("mesh_" + level, 1, 1, 1, 1, 1, 1, 1)));
+                    new FullCellSimulationRunner.SensitivityCase("mesh_" + level, 1, 1, 1, 1, 1, 1, 1, 1)));
         }
         Path file = simulation.outputRoot().resolve("csv").resolve(
                 "FULLCELL_" + PathUtils.caseStem(material.name(), mode, cRate) + "_mesh_convergence.csv");
@@ -79,20 +79,36 @@ public final class FullCellBatchRunner {
         double high = 1+u;
         double radiusLow = Math.max(0.85, low);
         double radiusHigh = Math.min(1.15, high);
+        double strainLowScale = material.betaSensitivityValues().get(0) / material.betaSensitivityValues().get(1);
+        double strainHighScale = material.betaSensitivityValues().get(2) / material.betaSensitivityValues().get(1);
+        double modulusLowScale = material.youngModulusSensitivityGpa().get(0) / material.youngModulusSensitivityGpa().get(1);
+        double modulusHighScale = material.youngModulusSensitivityGpa().get(2) / material.youngModulusSensitivityGpa().get(1);
+        double poissonLowScale = material.poissonSensitivityValues().get(0) / material.poissonRatio();
+        double poissonHighScale = material.poissonSensitivityValues().get(2) / material.poissonRatio();
+        double positiveKineticsLowScale = material.exchangeCurrentDensitySensitivity().get(0)
+                / material.exchangeCurrentDensitySensitivity().get(1);
+        double positiveKineticsHighScale = material.exchangeCurrentDensitySensitivity().get(2)
+                / material.exchangeCurrentDensitySensitivity().get(1);
+        double negativeKineticsLowScale = cell.negativeExchangeCurrentDensitySensitivity().get(0)
+                / cell.negativeExchangeCurrentDensitySensitivity().get(1);
+        double negativeKineticsHighScale = cell.negativeExchangeCurrentDensitySensitivity().get(2)
+                / cell.negativeExchangeCurrentDensitySensitivity().get(1);
         List<FullCellSimulationRunner.SensitivityCase> cases = List.of(
                 FullCellSimulationRunner.SensitivityCase.baseline(),
-                new FullCellSimulationRunner.SensitivityCase("diffusion_low", low,low,1,1,1,1,1),
-                new FullCellSimulationRunner.SensitivityCase("diffusion_high", high,high,1,1,1,1,1),
-                new FullCellSimulationRunner.SensitivityCase("strain_low", 1,1,low,1,1,1,1),
-                new FullCellSimulationRunner.SensitivityCase("strain_high", 1,1,high,1,1,1,1),
-                new FullCellSimulationRunner.SensitivityCase("modulus_low", 1,1,1,low,1,1,1),
-                new FullCellSimulationRunner.SensitivityCase("modulus_high", 1,1,1,high,1,1,1),
-                new FullCellSimulationRunner.SensitivityCase("poisson_low", 1,1,1,1,low,1,1),
-                new FullCellSimulationRunner.SensitivityCase("poisson_high", 1,1,1,1,high,1,1),
-                new FullCellSimulationRunner.SensitivityCase("radius_low", 1,1,1,1,1,radiusLow,1),
-                new FullCellSimulationRunner.SensitivityCase("radius_high", 1,1,1,1,1,radiusHigh,1),
-                new FullCellSimulationRunner.SensitivityCase("kinetics_low", 1,1,1,1,1,1,low),
-                new FullCellSimulationRunner.SensitivityCase("kinetics_high", 1,1,1,1,1,1,high));
+                new FullCellSimulationRunner.SensitivityCase("diffusion_low", low,low,1,1,1,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("diffusion_high", high,high,1,1,1,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("strain_low", 1,1,strainLowScale,1,1,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("strain_high", 1,1,strainHighScale,1,1,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("modulus_low", 1,1,1,modulusLowScale,1,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("modulus_high", 1,1,1,modulusHighScale,1,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("poisson_low", 1,1,1,1,poissonLowScale,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("poisson_high", 1,1,1,1,poissonHighScale,1,1,1),
+                new FullCellSimulationRunner.SensitivityCase("radius_low", 1,1,1,1,1,radiusLow,1,1),
+                new FullCellSimulationRunner.SensitivityCase("radius_high", 1,1,1,1,1,radiusHigh,1,1),
+                new FullCellSimulationRunner.SensitivityCase("positive_kinetics_low", 1,1,1,1,1,1,positiveKineticsLowScale,1),
+                new FullCellSimulationRunner.SensitivityCase("positive_kinetics_high", 1,1,1,1,1,1,positiveKineticsHighScale,1),
+                new FullCellSimulationRunner.SensitivityCase("negative_kinetics_low", 1,1,1,1,1,1,1,negativeKineticsLowScale),
+                new FullCellSimulationRunner.SensitivityCase("negative_kinetics_high", 1,1,1,1,1,1,1,negativeKineticsHighScale));
         List<FullCellSimulationRunner.RunResult> results = new ArrayList<>();
         for (var sensitivity : cases) {
             results.add(runner.run(material, cell, simulation,
@@ -126,26 +142,41 @@ public final class FullCellBatchRunner {
         double strainRatio = nfmzc.beta()/Math.max(Math.abs(nfm.beta()),1e-30);
         double modulusRatio = leading(nfmzc.youngModulus())/leading(nfm.youngModulus());
         double poissonRatio = nfmzc.poissonRatio()/Math.max(Math.abs(nfm.poissonRatio()),1e-30);
+        double positiveKineticsRatio = leading(nfmzc.exchangeCurrentDensity())
+                / leading(nfm.exchangeCurrentDensity());
 
         List<FullCellSimulationRunner.RunResult> results = new ArrayList<>();
         results.add(runner.run(nfm, cell, simulation,
                 new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
-                new FullCellSimulationRunner.SensitivityCase("actual_nfm",1,1,1,1,1,1,1)));
+                new FullCellSimulationRunner.SensitivityCase("actual_nfm",1,1,1,1,1,1,1,1)));
         results.add(runner.run(nfmzc, cell, simulation,
                 new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
-                new FullCellSimulationRunner.SensitivityCase("actual_nfmzc",1,1,1,1,1,1,1)));
+                new FullCellSimulationRunner.SensitivityCase("actual_nfmzc",1,1,1,1,1,1,1,1)));
         results.add(runner.run(nfm, cell, simulation,
                 new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
                 new FullCellSimulationRunner.SensitivityCase("nfm_with_nfmzc_diffusion",
-                        chargeRatio,dischargeRatio,1,1,1,1,1)));
+                        chargeRatio,dischargeRatio,1,1,1,1,1,1)));
+        results.add(runner.run(nfm, cell, simulation,
+                new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
+                new FullCellSimulationRunner.SensitivityCase("nfm_with_nfmzc_strain_only",
+                        1,1,strainRatio,1,1,1,1,1)));
+        results.add(runner.run(nfm, cell, simulation,
+                new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
+                new FullCellSimulationRunner.SensitivityCase("nfm_with_nfmzc_modulus_only",
+                        1,1,1,modulusRatio,1,1,1,1)));
+        results.add(runner.run(nfm, cell, simulation,
+                new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
+                new FullCellSimulationRunner.SensitivityCase("nfm_with_nfmzc_positive_kinetics",
+                        1,1,1,1,1,1,positiveKineticsRatio,1)));
         results.add(runner.run(nfm, cell, simulation,
                 new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
                 new FullCellSimulationRunner.SensitivityCase("nfm_with_nfmzc_mechanics",
-                        1,1,strainRatio,modulusRatio,poissonRatio,1,1)));
+                        1,1,strainRatio,modulusRatio,poissonRatio,1,1,1)));
         results.add(runner.run(nfm, cell, simulation,
                 new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
-                new FullCellSimulationRunner.SensitivityCase("nfm_with_nfmzc_diffusion_and_mechanics",
-                        chargeRatio,dischargeRatio,strainRatio,modulusRatio,poissonRatio,1,1)));
+                new FullCellSimulationRunner.SensitivityCase("nfm_with_nfmzc_all_configured_differences",
+                        chargeRatio,dischargeRatio,strainRatio,modulusRatio,poissonRatio,1,
+                        positiveKineticsRatio,1)));
         Path file = simulation.outputRoot().resolve("csv").resolve(
                 "FULLCELL_" + PathUtils.caseStem("ATTRIBUTION", mode, cRate) + ".csv");
         writeSummary(file, results);
@@ -160,7 +191,7 @@ public final class FullCellBatchRunner {
             String id = Double.toString(fraction).replace('.', 'p');
             results.add(runner.run(material, cell, simulation.withMaxStepFraction(fraction),
                     new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
-                    new FullCellSimulationRunner.SensitivityCase("dt_" + id,1,1,1,1,1,1,1)));
+                    new FullCellSimulationRunner.SensitivityCase("dt_" + id,1,1,1,1,1,1,1,1)));
         }
         Path file = simulation.outputRoot().resolve("csv").resolve(
                 "FULLCELL_" + PathUtils.caseStem(material.name(), mode, cRate) + "_time_convergence.csv");

@@ -4,8 +4,8 @@ particle_radius,2.5,um,measured,supplied requirement,0.05
 specific_capacity,175,mAh/g,measured,supplied experimental capacity,0.05
 charge_diffusivity,1.84e-13,m2/s,measured,supplied GITT average,0.25
 discharge_diffusivity,2.76e-13,m2/s,measured,supplied GITT average,0.25
-density,4550,kg/m3,provisional,bring-up estimate,0.15
-young_modulus,150,GPa,provisional,bring-up estimate,0.25
-poisson_ratio,0.25,1,provisional,bring-up estimate,0.20
-chemical_expansion_beta,0.008,1,provisional,linear sensitivity placeholder pending XRD,0.30
-exchange_current_density,1,A/m2,provisional,bring-up estimate,0.50
+density,4550,kg/m3,provisional,inherited from parameters.docx NFM model pending NFMZC measurement,0.15
+young_modulus,165,GPa,provisional,user-supplied 10-percent stiffening hypothesis; sensitivity 120-210 GPa,0.2727
+poisson_ratio,0.30,1,provisional,user-supplied isotropic approximation equal to NFM; sensitivity 0.25-0.35,0.1667
+chemical_expansion_beta,0.008,1,provisional,user-supplied trend-model baseline pending XRD; sensitivity 0.005-0.014,0.75
+exchange_current_density,8,A/m2,provisional,user-supplied calibration baseline; sensitivity 1-30 A/m2,0.875

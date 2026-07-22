@@ -48,7 +48,7 @@ public final class FullCellPhysicsBuilder {
         battery.create("ies_neg", ComsolTagUtils.FEATURE_INTERNAL_ELECTRODE_SURFACE, 2);
         battery.feature("ies_neg").selection().named(ComsolTagUtils.NEGATIVE_SURFACES);
         battery.feature("ies_neg").feature("er1").set("Eeq", "Eeq_neg(xNegBattery)");
-        battery.feature("ies_neg").feature("er1").set("i0", "i0_neg(xNegBattery)*kineticsScale");
+        battery.feature("ies_neg").feature("er1").set("i0", "i0_neg(xNegBattery)*negativeKineticsScale");
 
         battery.create("ies_pos", ComsolTagUtils.FEATURE_INTERNAL_ELECTRODE_SURFACE, 2);
         battery.feature("ies_pos").selection().named(ComsolTagUtils.POSITIVE_SURFACE);

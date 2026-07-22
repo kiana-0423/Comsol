@@ -6,13 +6,14 @@ import java.util.Properties;
 
 /** Configuration for the explicit-particle three-dimensional representative cell. */
 public record FullCellConfig(
-        String anodeLength, String separatorLength, String cathodeLength,
+        String geometryClassification, String anodeLength, String separatorLength, String cathodeLength,
         String width, String height,
         String negativeLargeRadius, String negativeSmallRadius,
         String electrolyteInitialConcentration, String electrolyteConductivity, String electrolyteDiffusivity,
         double transferenceNumber, double chargeTransferAlpha,
         String negativeCsmax, double negativeInitialX, String negativeDiffusivity,
-        String negativeYoungModulus, double negativePoissonRatio,
+        String negativeYoungModulus, double negativePoissonRatio, double negativeBeta,
+        List<Double> negativeExchangeCurrentDensitySensitivity,
         String binderConductivity, String binderYoungModulus, double binderPoissonRatio,
         String separatorYoungModulus, double separatorPoissonRatio,
         double anodePorosity, double cathodePorosity, double separatorPorosity,

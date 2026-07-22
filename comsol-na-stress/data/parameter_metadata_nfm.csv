@@ -4,8 +4,8 @@ particle_radius,2.5,um,measured,supplied requirement,0.05
 specific_capacity,175,mAh/g,measured,supplied experimental capacity,0.05
 charge_diffusivity,1.08e-13,m2/s,measured,supplied GITT average,0.25
 discharge_diffusivity,1.40e-13,m2/s,measured,supplied GITT average,0.25
-density,4550,kg/m3,provisional,bring-up estimate,0.15
-young_modulus,150,GPa,provisional,bring-up estimate,0.25
-poisson_ratio,0.25,1,provisional,bring-up estimate,0.20
-chemical_expansion_beta,0.01,1,provisional,linear sensitivity placeholder pending XRD,0.30
-exchange_current_density,1,A/m2,provisional,bring-up estimate,0.50
+density,4550,kg/m3,provisional,parameters.docx legacy NFM model,0.15
+young_modulus,150,GPa,provisional,parameters.docx legacy NFM model; sensitivity 100-200 GPa,0.3333
+poisson_ratio,0.30,1,provisional,user-supplied O3 layered-oxide modeling recommendation; sensitivity 0.25-0.35,0.1667
+chemical_expansion_beta,0.012,1,provisional,user-supplied trend-model baseline pending XRD; sensitivity 0.008-0.020,0.6667
+exchange_current_density,5,A/m2,provisional,user-supplied calibration baseline; sensitivity 1-20 A/m2,0.80

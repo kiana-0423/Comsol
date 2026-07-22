@@ -50,6 +50,8 @@ public final class FullCellParameterBuilder {
         model.param().set("beta_pos", "beta_pos_base*strainScale");
         model.param().set("E_neg", c.negativeYoungModulus());
         model.param().set("nu_neg", Double.toString(c.negativePoissonRatio()));
+        model.param().set("beta_neg", Double.toString(c.negativeBeta()),
+                "Hard-carbon chemical expansion [provisional; inactive in positive-only mechanics]");
         model.param().set("E_binder", c.binderYoungModulus());
         model.param().set("nu_binder", Double.toString(c.binderPoissonRatio()));
         model.param().set("E_separator", c.separatorYoungModulus());
@@ -68,7 +70,7 @@ public final class FullCellParameterBuilder {
         model.param().set("tau_ca", Double.toString(c.cathodeTortuosity()));
         model.param().set("tau_sep", Double.toString(c.separatorTortuosity()));
         model.param().set("i0_pos_base", m.exchangeCurrentDensity());
-        model.param().set("i0_pos", "i0_pos_base*kineticsScale");
+        model.param().set("i0_pos", "i0_pos_base*positiveKineticsScale");
 
         model.param().set("F_const", "96485.33212[C/mol]");
         model.param().set("Capacity", m.capacity());
@@ -109,6 +111,7 @@ public final class FullCellParameterBuilder {
         model.param().set("modulusScale", Double.toString(sensitivity.modulusScale()));
         model.param().set("poissonScale", Double.toString(sensitivity.poissonScale()));
         model.param().set("radiusScale", Double.toString(sensitivity.radiusScale()));
-        model.param().set("kineticsScale", Double.toString(sensitivity.kineticsScale()));
+        model.param().set("positiveKineticsScale", Double.toString(sensitivity.positiveKineticsScale()));
+        model.param().set("negativeKineticsScale", Double.toString(sensitivity.negativeKineticsScale()));
     }
 }

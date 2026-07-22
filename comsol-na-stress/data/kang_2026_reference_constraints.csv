@@ -1,0 +1,16 @@
+scope,quantity,value,unit,classification,project_use,source
+shared,voltage_window,2.0-4.3,V,common_condition,confirm charge-discharge voltage range,Kang et al. 2026 main text
+shared,charge_stress_snapshots,2.7;3.3;3.7;4.0;4.3,V,common_condition,confirm configured charge snapshot voltages,Kang et al. 2026 Figure 6
+shared,discharge_stress_snapshots,4.3;3.5;3.3;3.0;2.6,V,common_condition,confirm configured discharge snapshot voltages,Kang et al. 2026 Figure 6
+shared,stress_plot_scale,10-1000,MPa,plotting_reference,use common 0-1000 MPa project scale,Kang et al. 2026 Figure 6
+NFM,O3_to_P3_onset,3.3,V,validation_reference,validate phase-voltage response; do not enable x-based phase surrogate,Kang et al. 2026 in-situ XRD
+NFM,high_voltage_O3_prime_region,4.25-4.30,V,validation_reference,validate high-voltage phase region,Kang et al. 2026 in-situ XRD
+NFM,lattice_a_change,1.83,percent,sensitivity_bound,use as anisotropic strain bound only,Kang et al. 2026 in-situ XRD
+NFM,lattice_c_change,3.04,percent,sensitivity_bound,use as anisotropic strain bound only,Kang et al. 2026 in-situ XRD
+NFM,average_GITT_DNa,1.17e-12,m2/s,literature_comparison,compare order of magnitude; retain supplied direction-specific GITT inputs,Kang et al. 2026 GITT
+NFM,reported_peak_von_Mises_stress,597,MPa,external_validation,compare result range only; never force solver outcome,Kang et al. 2026 COMSOL result
+NFMC,P2_phase_fraction,3.2,percent,non_transferable,do not assign to bulk-doped NFMZC,Kang et al. 2026 XRD refinement
+NFMC,NaxCoO2_phase_fraction,2.5,percent,non_transferable,do not assign to bulk-doped NFMZC,Kang et al. 2026 XRD refinement
+NFMC,average_GITT_DNa,2.06e-12,m2/s,non_transferable,do not assign to bulk-doped NFMZC,Kang et al. 2026 GITT
+NFMC,lattice_a_change,1.13,percent,non_transferable,do not assign to bulk-doped NFMZC,Kang et al. 2026 in-situ XRD
+NFMC,lattice_c_change,2.23,percent,non_transferable,do not assign to bulk-doped NFMZC,Kang et al. 2026 in-situ XRD

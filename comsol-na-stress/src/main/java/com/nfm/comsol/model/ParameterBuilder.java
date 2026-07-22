@@ -41,8 +41,8 @@ public final class ParameterBuilder {
         model.param().set("DsSurface", m.gradientDsSurface(), "Surface diffusivity [provisional]");
         model.param().set("betaCore", Double.toString(m.gradientBetaCore()), "Core expansion [provisional]");
         model.param().set("betaSurface", Double.toString(m.gradientBetaSurface()), "Surface expansion [provisional]");
-        model.param().set("phaseXStart", Double.toString(m.phaseStart()), "Phase-window start [provisional]");
-        model.param().set("phaseXEnd", Double.toString(m.phaseEnd()), "Phase-window end [provisional]");
+        model.param().set("phaseXHigh", Double.toString(m.phaseHigh()), "Higher-x phase-window boundary [provisional]");
+        model.param().set("phaseXLow", Double.toString(m.phaseLow()), "Lower-x phase-window boundary [provisional]");
         model.param().set("phaseExtraStrain", Double.toString(m.phaseExtraStrain()), "Phase extra strain [provisional]");
         model.param().set("phaseSmooth", Double.toString(m.phaseSmoothingWidth()), "Phase smoothing width [provisional]");
     }

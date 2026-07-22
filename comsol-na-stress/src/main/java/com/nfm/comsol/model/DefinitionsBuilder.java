@@ -31,10 +31,15 @@ public final class DefinitionsBuilder {
                 ? "betaCore+(betaSurface-betaCore)*rNorm^gradExponent" : "betaLinear";
         vars.set("betaEffective", beta, "Active isotropic expansion coefficient");
         vars.set("deltaX", "xNa-xInitial", "Na fraction relative to stress-free initial state");
+        vars.set("phaseCoordinate",
+                "min(1,max(0,(phaseXHigh-xNa)/max(phaseXHigh-phaseXLow,phaseSmooth)))",
+                "0 above phase x-high and 1 below phase x-low during decreasing-x charge");
+        vars.set("phaseProgress", "phaseCoordinate^2*(3-2*phaseCoordinate)",
+                "C1-smooth phase progress across the configured x window");
 
         String strain = switch (material.strainMode()) {
             case "interpolation" -> (material.name().equals("NFM") ? "strain_NFM(xNa)" : "strain_NFMZC(xNa)");
-            case "phase_transition" -> "betaEffective*deltaX+phaseExtraStrain*flc2hs(phaseXStart-xNa,phaseSmooth)";
+            case "phase_transition" -> "betaEffective*deltaX+phaseExtraStrain*phaseProgress";
             default -> "betaEffective*(cNa-cRef)/csmax";
         };
         vars.set("epsilonChem", strain, "Isotropic chemical eigenstrain; not thermal strain");

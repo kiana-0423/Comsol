@@ -15,10 +15,31 @@ public final class ValidationUtils {
         require(c.initialX() >= 0 && c.initialX() <= 1, "initial.x must be in [0,1]");
         require(c.finalChargeX() >= 0 && c.finalChargeX() < c.initialX(), "final.x.charge must be >=0 and below initial.x");
         require(c.poissonRatio() > -1 && c.poissonRatio() < 0.5, "poisson.ratio must be between -1 and 0.5");
+        require(c.poissonSensitivityValues().size() == 3,
+                "poisson.sensitivity.values must contain low, baseline, high");
+        require(c.poissonSensitivityValues().get(0) < c.poissonSensitivityValues().get(1)
+                        && c.poissonSensitivityValues().get(1) < c.poissonSensitivityValues().get(2),
+                "poisson.sensitivity.values must be strictly increasing");
+        require(c.poissonSensitivityValues().stream().allMatch(v -> v > -1 && v < 0.5),
+                "poisson sensitivity values must be between -1 and 0.5");
+        require(Math.abs(c.poissonSensitivityValues().get(1) - c.poissonRatio()) < 1e-12,
+                "middle poisson sensitivity value must equal poisson.ratio");
         require(c.beta() >= 0, "chemical.expansion.beta must be nonnegative");
+        validatePositiveTriplet(c.youngModulusSensitivityGpa(), "young.modulus.sensitivity.gpa");
+        validatePositiveTriplet(c.betaSensitivityValues(), "chemical.expansion.beta.sensitivity.values");
+        validatePositiveTriplet(c.exchangeCurrentDensitySensitivity(),
+                "exchange.current.density.sensitivity.a_m2");
+        require(Math.abs(c.betaSensitivityValues().get(1) - c.beta()) < 1e-12,
+                "middle beta sensitivity value must equal chemical.expansion.beta");
+        require(Math.abs(c.youngModulusSensitivityGpa().get(1) - leading(c.youngModulus())) < 1e-12,
+                "middle Young-modulus sensitivity value must equal young.modulus in GPa");
+        require(Math.abs(c.exchangeCurrentDensitySensitivity().get(1)
+                        - leading(c.exchangeCurrentDensity())) < 1e-12,
+                "middle exchange-current sensitivity value must equal exchange.current.density in A/m2");
         require(List.of("constant", "interpolation").contains(c.diffusionMode()), "invalid diffusion.mode");
         require(List.of("linear", "interpolation", "phase_transition").contains(c.strainMode()), "invalid strain.mode");
         require(c.phaseSmoothingWidth() > 0, "phase.smoothing.width must be positive");
+        require(c.phaseHigh() > c.phaseLow(), "phase.x.high must exceed phase.x.low for decreasing-x charge");
         require(c.gradientExponent() > 0, "gradient.exponent must be positive");
         require(List.of("provisional", "literature", "measured").contains(c.parameterStatus().toLowerCase()),
                 "parameter.status must be provisional, literature, or measured");
@@ -27,13 +48,29 @@ public final class ValidationUtils {
         require(!c.parameterSource().isBlank(), "parameter.source must not be blank");
     }
 
+    private static void validatePositiveTriplet(List<Double> values, String name) {
+        require(values.size() == 3, name + " must contain low, baseline, high");
+        require(values.get(0) > 0 && values.get(0) < values.get(1) && values.get(1) < values.get(2),
+                name + " must be positive and strictly increasing");
+    }
+
+    private static double leading(String expression) {
+        int bracket = expression.indexOf('[');
+        return Double.parseDouble((bracket < 0 ? expression : expression.substring(0, bracket)).trim());
+    }
+
     public static void validateFullCellConfig(FullCellConfig c) {
+        require(c.geometryClassification().equals("representative-microstructure"),
+                "geometry.classification must be representative-microstructure");
         require(c.transferenceNumber() > 0 && c.transferenceNumber() < 1,
                 "electrolyte.transference.number must be in (0,1)");
         require(c.chargeTransferAlpha() > 0 && c.chargeTransferAlpha() < 1,
                 "kinetics.alpha must be in (0,1)");
         require(c.negativeInitialX() >= 0 && c.negativeInitialX() <= 1,
                 "negative.initial.x must be in [0,1]");
+        require(c.negativeBeta() >= 0, "negative.chemical.expansion.beta must be nonnegative");
+        validatePositiveTriplet(c.negativeExchangeCurrentDensitySensitivity(),
+                "negative.exchange.current.density.sensitivity.a_m2");
         for (double p : List.of(c.anodePorosity(), c.cathodePorosity(), c.separatorPorosity())) {
             require(p > 0 && p < 1, "porosities must be in (0,1)");
         }
