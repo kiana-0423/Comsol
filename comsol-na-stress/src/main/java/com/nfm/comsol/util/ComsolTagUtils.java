@@ -54,12 +54,14 @@ public final class ComsolTagUtils {
     public static final String FULL_STUDY_DISCHARGE = "study_full_discharge";
     public static final String FULL_DATASET_POSITIVE_CUTLINE = "positive_radial_cutline";
 
-    public static final String PHYSICS_LITHIUM_ION_BATTERY = "LithiumIonBattery";
+    // COMSOL 6.4 model-tree/API identifier (verified against the bundled
+    // na_ion_battery_1d and nmc_electrode_heterogeneous model metadata).
+    public static final String PHYSICS_LITHIUM_ION_BATTERY = "LithiumIonBatteryMPH";
     public static final String FEATURE_SEPARATOR = "Separator";
     public static final String FEATURE_POROUS_CONDUCTIVE_BINDER = "PorousConductiveBinder";
     public static final String FEATURE_INTERNAL_ELECTRODE_SURFACE = "InternalElectrodeSurface";
     public static final String FEATURE_ELECTRODE_CURRENT = "ElectrodeCurrent";
-    public static final String FEATURE_ELECTRIC_POTENTIAL = "ElectricPotential";
+    public static final String FEATURE_ELECTRIC_POTENTIAL = "ElectricGround";
     public static final String POSITIVE_LOCAL_CURRENT = "liion.ies_pos.er1.iloc";
     public static final String NEGATIVE_LOCAL_CURRENT = "liion.ies_neg.er1.iloc";
 }

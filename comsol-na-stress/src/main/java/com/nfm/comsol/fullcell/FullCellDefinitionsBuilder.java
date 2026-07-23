@@ -32,7 +32,11 @@ public final class FullCellDefinitionsBuilder {
                 + ")*if(runDirection>0,diffusionChargeScale,diffusionDischargeScale)");
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables")
                 .set("epsilonChemPos", "if(useMeasuredStrain>0.5,strain_pos_fun(xPos),beta_pos*(xPos-x_pos_initial))");
-        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables")
+
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable().create("positive_surface_variables");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_surface_variables")
+                .selection().named(ComsolTagUtils.POSITIVE_SURFACE);
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_surface_variables")
                 .set("positiveNaFlux", "-" + ComsolTagUtils.POSITIVE_LOCAL_CURRENT + "/F_const",
                 "Local Butler-Volmer current converted to Na molar flux");
 
@@ -45,7 +49,11 @@ public final class FullCellDefinitionsBuilder {
                 .set("xNegBattery", "if(isdefined(cNeg),cNeg/csmax_neg,x_neg_initial)");
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_variables")
                 .set("DsNegEffective", "Ds_neg_fun(xNeg)");
-        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_variables")
+
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable().create("negative_surface_variables");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_surface_variables")
+                .selection().named(ComsolTagUtils.NEGATIVE_SURFACES);
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_surface_variables")
                 .set("negativeNaFlux", "-" + ComsolTagUtils.NEGATIVE_LOCAL_CURRENT + "/F_const",
                 "Local Butler-Volmer current converted to Na molar flux");
 
@@ -62,7 +70,7 @@ public final class FullCellDefinitionsBuilder {
 
         model.component(ComsolTagUtils.FULL_COMPONENT).variable().create("cell_metrics");
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
-                .set("cellVoltage", "ave_positive_collector(liion.phis)-ave_negative_collector(liion.phis)", "Terminal voltage");
+                .set("cellVoltage", "ave_positive_collector(phis)-ave_negative_collector(phis)", "Terminal voltage");
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
                 .set("cellCapacity", "abs(I_app*t)/3600/1[mAh]", "Transferred cell capacity");
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
@@ -70,7 +78,7 @@ public final class FullCellDefinitionsBuilder {
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
                 .set("negativeInventory", "ave_neg(cNeg)*(2*4*pi*Rp_neg_large^3/3+2*4*pi*Rp_neg_small^3/3)");
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics").set("electrolyteInventoryChange",
-                "eps_an*int_an_electrolyte(liion.cl-cl0)+eps_sep*int_sep_electrolyte(liion.cl-cl0)+eps_ca*int_ca_electrolyte(liion.cl-cl0)",
+                "eps_an*int_an_electrolyte(cl-cl0)+eps_sep*int_sep_electrolyte(cl-cl0)+eps_ca*int_ca_electrolyte(cl-cl0)",
                 "Electrolyte Na inventory change relative to the uniform initial salt concentration");
         model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
                 .set("totalNaInventory", "positiveInventory+negativeInventory+electrolyteInventoryChange");

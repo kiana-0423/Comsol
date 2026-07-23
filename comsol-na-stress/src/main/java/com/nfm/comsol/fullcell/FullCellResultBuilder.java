@@ -24,13 +24,13 @@ public final class FullCellResultBuilder {
         metrics.put("surface_positive_xNa", "ave_pos_surface(xPos)");
         metrics.put("center_positive_xNa", "at3(x_pos_center,y_pos_center,z_pos_center,xPos)");
         metrics.put("surface_center_delta_xNa", "ave_pos_surface(xPos)-at3(x_pos_center,y_pos_center,z_pos_center,xPos)");
-        metrics.put("maximum_von_mises_Pa", "max_pos(solid_full.mises)");
-        metrics.put("average_von_mises_Pa", "ave_pos(solid_full.mises)");
-        metrics.put("stress_stddev_Pa", "sqrt(ave_pos((solid_full.mises-ave_pos(solid_full.mises))^2))");
+        metrics.put("maximum_von_mises_Pa", "max_pos(solid.mises)");
+        metrics.put("average_von_mises_Pa", "ave_pos(solid.mises)");
+        metrics.put("stress_stddev_Pa", "sqrt(ave_pos((solid.mises-ave_pos(solid.mises))^2))");
         metrics.put("mass_balance_relative_error",
                 "abs(totalNaInventory-totalNaReference)/max(abs(totalNaReference),1e-30[mol])");
         metrics.put("negative_capacity_ratio", "negativeCapacityRatio");
-        metrics.put("average_electrolyte_concentration_mol_m3", "ave_electrolyte(liion.cl)/1[mol/m^3]");
+        metrics.put("average_electrolyte_concentration_mol_m3", "ave_electrolyte(cl)/1[mol/m^3]");
         metrics.put("quantitative_ready", "quantitativeReady");
     }
 
@@ -41,22 +41,21 @@ public final class FullCellResultBuilder {
         String suffix = quantitative ? "" : " [PROVISIONAL]";
         model.result().dataset().create(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE, "CutLine3D");
         model.result().dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE)
-                .set("point1", new String[]{"x_pos_center", "y_pos_center", "z_pos_center"});
-        model.result().dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE)
-                .set("point2", new String[]{"x_pos_center+Rp_pos", "y_pos_center", "z_pos_center"});
-        model.result().dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE).set("numpoints", 101);
+                .set("genpoints", new String[][]{
+                        {"x_pos_center", "y_pos_center", "z_pos_center"},
+                        {"x_pos_center+Rp_pos", "y_pos_center", "z_pos_center"}});
         volumePlot(model, "full_concentration", ComsolTagUtils.POSITIVE_PARTICLE,
                 "xPos", "1", "Positive-particle Na fraction" + suffix,
                 Double.toString(config.concentrationScaleMin()), Double.toString(config.concentrationScaleMax()));
         volumePlot(model, "full_stress", ComsolTagUtils.POSITIVE_PARTICLE,
-                "solid_full.mises", "MPa", "Positive-particle von Mises stress" + suffix,
+                "solid.mises", "MPa", "Positive-particle von Mises stress" + suffix,
                 config.stressScaleMin(), config.stressScaleMax());
         autoVolumePlot(model, "full_electrolyte", ComsolTagUtils.ELECTROLYTE_DOMAINS,
-                "liion.cl", "mol/m^3", "Electrolyte Na-salt concentration" + suffix);
+                "cl", "mol/m^3", "Electrolyte Na-salt concentration" + suffix);
         autoVolumePlot(model, "full_electrolyte_potential", ComsolTagUtils.ELECTROLYTE_DOMAINS,
-                "liion.phil", "V", "Electrolyte potential" + suffix);
+                "phil", "V", "Electrolyte potential" + suffix);
         autoVolumePlot(model, "full_solid_potential", ComsolTagUtils.BINDER_DOMAINS,
-                "liion.phis", "V", "Solid-phase potential" + suffix);
+                "phis", "V", "Solid-phase potential" + suffix);
     }
 
     private void volumePlot(Model model, String tag, String selection, String expression, String unit,
@@ -64,7 +63,6 @@ public final class FullCellResultBuilder {
         model.result().create(tag, "PlotGroup3D");
         model.result(tag).label(label);
         model.result(tag).create("volume", "Volume");
-        model.result(tag).feature("volume").selection().named(selection);
         model.result(tag).feature("volume").set("expr", expression);
         model.result(tag).feature("volume").set("unit", unit);
         model.result(tag).feature("volume").set("rangecoloractive", "on");
@@ -77,18 +75,28 @@ public final class FullCellResultBuilder {
         model.result().create(tag, "PlotGroup3D");
         model.result(tag).label(label);
         model.result(tag).create("volume", "Volume");
-        model.result(tag).feature("volume").selection().named(selection);
         model.result(tag).feature("volume").set("expr", expression);
         model.result(tag).feature("volume").set("unit", unit);
     }
 
     public void bindSolution(Model model, String dataset) {
         model.result().dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE).set("data", dataset);
+        // Also refresh expressions when binding a model loaded for --export-only;
+        // older saved MPH files may contain pre-6.4-debugging variable names.
+        model.result("full_stress").feature("volume").set("expr", "solid.mises");
+        model.result("full_electrolyte").feature("volume").set("expr", "cl");
+        model.result("full_electrolyte_potential").feature("volume").set("expr", "phil");
+        model.result("full_solid_potential").feature("volume").set("expr", "phis");
         model.result("full_concentration").set("data", dataset);
         model.result("full_stress").set("data", dataset);
         model.result("full_electrolyte").set("data", dataset);
         model.result("full_electrolyte_potential").set("data", dataset);
         model.result("full_solid_potential").set("data", dataset);
+        model.result("full_concentration").selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
+        model.result("full_stress").selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
+        model.result("full_electrolyte").selection().named(ComsolTagUtils.ELECTROLYTE_DOMAINS);
+        model.result("full_electrolyte_potential").selection().named(ComsolTagUtils.ELECTROLYTE_DOMAINS);
+        model.result("full_solid_potential").selection().named(ComsolTagUtils.BINDER_DOMAINS);
     }
 
     public Map<String, String> metrics() {

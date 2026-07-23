@@ -1,0 +1,12 @@
+check,value,limit,pass
+mass_balance_relative_error,1.846013736236178E-4,0.01,true
+cutoff_voltage_error_V,0.006014801431517114,0.05,true
+positive_xNa_monotonic,true,1,true
+initial_maximum_stress_Pa,7.335520501646285E-22,1000.0,true
+initial_zero_stress_applicable,true,1,true
+negative_capacity_ratio,1.0168673850566228,1.0,true
+quantitative_ready,false,1,false
+voltage_rmse_V,0.6800555215693245,0.1,false
+voltage_rmse_publication_target_V,0.6800555215693245,0.05,false
+cutoff_capacity_relative_error,0.7062354357272496,0.05,false
+experimental_curve_applicable,true,1,true

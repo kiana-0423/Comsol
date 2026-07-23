@@ -21,7 +21,6 @@ public final class ParameterBuilder {
         model.param().set("nu_particle", Double.toString(m.poissonRatio()), "Poisson ratio [provisional]");
         model.param().set("betaLinear", Double.toString(m.beta()), "Isotropic chemical expansion coefficient [provisional]");
         model.param().set("C_rate", Double.toString(cRate), "Applied C-rate");
-        model.param().set("F_const", "96485.33212[C/mol]", "Faraday constant");
         model.param().set("Vp", "4*pi*Rp^3/3", "Full spherical particle volume");
         model.param().set("mp", "rho_p*Vp", "Single-particle mass");
         model.param().set("Qp", "mp*Capacity", "Single-particle capacity; mAh/g is dimensionally Ah/kg");

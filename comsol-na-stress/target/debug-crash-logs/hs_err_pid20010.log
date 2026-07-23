@@ -1,0 +1,70 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x0000000130c76540, pid=20010, tid=78083
+#
+# JRE version: OpenJDK Runtime Environment Temurin-21.0.7+6 (21.0.7+6) (build 21.0.7+6-LTS)
+# Java VM: OpenJDK 64-Bit Server VM Temurin-21.0.7+6 (21.0.7+6-LTS, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
+# Problematic frame:
+# C  0x0000000130c7653c
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   https://github.com/adoptium/adoptium-support/issues
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Declipse.product=com.comsol.util.product -Dosgi.bundles=org.eclipse.update.configurator@1:start,org.eclipse.equinox.common@2:start,org.apache.felix.scr@1:start,org.eclipse.equinox.event@3:start,org.eclipse.core.runtime@start -Dosgi.bundles.defaultStartLevel=4 -Dosgi.startLevel=6 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dosgi.clean=true -Dorg.osgi.service.log.admin.loglevel=INFO -Dosgi.locking=none -Dosgi.configuration.area=@user.home/Library/Preferences/COMSOL/v64/configuration/comsol_95842050621 -Dosgi.instance.area=@user.home/Library/Preferences/COMSOL/v64/workspace/comsol_95842050621 -Dosgi.checkConfiguration=true -Dcs.logoutput=file -Dcs.logfileprefix=batch -Dcs.uniqueworkspace=on -Dcs.processuid=95842050621 -Xss4m -Xms40m -Xmx2g -XX:MaxMetaspaceSize=1g -Dlog4j2.formatMsgNoLookups=true 
+
+Host: "Mac15,6" arm64, 11 cores, 36G, Darwin 25.5.0, macOS 26.5.2 (25F84)
+Time: Thu Jul 23 23:06:12 2026 JST elapsed time: 107.027075 seconds (0d 0h 1m 47s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000902724000):  JavaThread "BlockingImpl-0" [_thread_in_native, id=78083, stack(0x000000017b774000,0x000000017bb77000) (4108K)]
+
+Stack: [0x000000017b774000,0x000000017bb77000],  sp=0x000000017bb67110,  free space=4044k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  0x0000000130c7653c
+C  0x0000000130c62254
+C  0x0000000130c5db48
+C  0x0000000130d8a02c
+C  0x0000000130d4b9fc
+C  0x0000000130dc8938
+C  0x0000000130dcceb4
+C  0x0000000130ed806c
+C  0x0000000130b964dc
+C  [libcssolver.dylib+0x6a8d60]  femModal(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x19544c
+C  [libcssolver.dylib+0x6ac59c]  femModal(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x198c88
+C  [libcssolver.dylib+0x6ac4d0]  femModal(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x198bbc
+C  [libcssolver.dylib+0x29f7b8]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x241d14
+C  [libcssolver.dylib+0x2a1f7c]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x2444d8
+C  [libcssolver.dylib+0x1b7168]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x1596c4
+C  [libcssolver.dylib+0x1b5fc0]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x15851c
+C  [libcssolver.dylib+0x1f19ac]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x193f08
+C  [libcssolver.dylib+0x1f14c0]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x193a1c
+C  [libcssolver.dylib+0x1817e8]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x123d44
+C  [libcssolver.dylib+0x17b850]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x11ddac
+C  [libcssolver.dylib+0x4a5768]  femOptim(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x9303c
+C  [libcssundials.dylib+0xc97c]  csIDAGetQuadB+0xb588
+C  [libcssundials.dylib+0x9ec0]  csIDAGetQuadB+0x8acc
+C  [libcssolver.dylib+0x450a50]  femOptim(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x3e324
+C  [libcssolver.dylib+0x43e5e0]  femOptim(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x2beb4
+C  [libcssolver.dylib+0x43d810]  femOptim(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x2b0e4
+C  [libcssolver.dylib+0x35165c]  femTime(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&, std::__1::shared_ptr<TempDbsHandle>)+0x98ec
+C  [libcssolver.dylib+0x34d65c]  femTime(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&, std::__1::shared_ptr<TempDbsHandle>)+0x58ec
+C  [libcssolver.dylib+0x34cda0]  femTime(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&, std::__1::shared_ptr<TempDbsHandle>)+0x5030
+C  [libcssolver.dylib+0x349720]  femTime(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&, std::__1::shared_ptr<TempDbsHandle>)+0x19b0
+C  [libcsjni.dylib+0x19aa94]  Java_com_comsol_nativejni_solver_FlSolver_femTime+0x148
+j  com.comsol.nativejni.solver.FlSolver.femTime(Lcom/comsol/nativejni/server/FlRunnable;Lcom/comsol/nativejni/CPointer;Lcom/comsol/nativejni/CPointer;Lcom/comsol/nativejni/CPointer;Lcom/comsol/nativejni/CPointer;Lcom/comsol/nativejni/CPointer;)V+0
+j  com.comsol.nativejni.solver.FlSolver.femTime(Lcom/comsol/nativejni/xmesh/Xmesh;Lcom/comsol/nativejni/util/Prop;Lcom/comsol/nativejni/util/Prop;Lcom/comsol/nativejni/xmesh/Solution;)V+28
+j  com.comsol.nativemph.b.l.a()V+59
+j  com.comsol.nativeutil.runnable.h.run()V+157
+j  com.comsol.solver.solution.SolverBase.a(Lcom/comsol/solver/e;Lcom/comsol/solver/e;Lcom/comsol/model/dbimodel/SavePoint;Lcom/comsol/model/dbimodel/XMeshNative;)V+1826
+j  com.comsol.solver.solution.SolverTimeBase.a(Lcom/comsol/solver/e;Lcom/comsol/solver/e;Lcom/comsol/model/dbimodel/SavePoint;Lcom/comsol/model/dbimodel/XMeshNative;)V+211
+j  com.comsol.solver.solution.SolverBase.doExecute(Lcom/comsol/solver/e;)V+225
+j  com.comsol.solver.SolverOperation.execute(Lcom/comsol/model/dbimodel/SolverSequence;Lcom/comsol/model/dbimodel/SolverFeature;[Lcom/comsol/model/operations/ISolverPropCollector;)V

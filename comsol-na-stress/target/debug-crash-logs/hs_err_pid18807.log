@@ -1,0 +1,48 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x0000000130732540, pid=18807, tid=71171
+#
+# JRE version: OpenJDK Runtime Environment Temurin-21.0.7+6 (21.0.7+6) (build 21.0.7+6-LTS)
+# Java VM: OpenJDK 64-Bit Server VM Temurin-21.0.7+6 (21.0.7+6-LTS, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
+# Problematic frame:
+# C  0x000000013073253c
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   https://github.com/adoptium/adoptium-support/issues
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Declipse.product=com.comsol.util.product -Dosgi.bundles=org.eclipse.update.configurator@1:start,org.eclipse.equinox.common@2:start,org.apache.felix.scr@1:start,org.eclipse.equinox.event@3:start,org.eclipse.core.runtime@start -Dosgi.bundles.defaultStartLevel=4 -Dosgi.startLevel=6 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dosgi.clean=true -Dorg.osgi.service.log.admin.loglevel=INFO -Dosgi.locking=none -Dosgi.configuration.area=@user.home/Library/Preferences/COMSOL/v64/configuration/comsol_30711548633 -Dosgi.instance.area=@user.home/Library/Preferences/COMSOL/v64/workspace/comsol_30711548633 -Dosgi.checkConfiguration=true -Dcs.logoutput=file -Dcs.logfileprefix=batch -Dcs.uniqueworkspace=on -Dcs.processuid=30711548633 -Xss4m -Xms40m -Xmx2g -XX:MaxMetaspaceSize=1g -Dlog4j2.formatMsgNoLookups=true 
+
+Host: "Mac15,6" arm64, 11 cores, 36G, Darwin 25.5.0, macOS 26.5.2 (25F84)
+Time: Thu Jul 23 22:57:37 2026 JST elapsed time: 67.298792 seconds (0d 0h 1m 7s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000a6c60dc00):  JavaThread "BlockingImpl-0" [_thread_in_native, id=71171, stack(0x000000017b7bc000,0x000000017bbbf000) (4108K)]
+
+Stack: [0x000000017b7bc000,0x000000017bbbf000],  sp=0x000000017bbaf240,  free space=4044k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  0x000000013073253c
+C  0x000000013071e254
+C  0x0000000130719b48
+C  0x000000013084602c
+C  0x00000001308079fc
+C  0x0000000130884938
+C  0x0000000130888eb4
+C  0x000000013099406c
+C  0x00000001306524dc
+C  [libcssolver.dylib+0x6a8d60]  femModal(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x19544c
+C  [libcssolver.dylib+0x6ac59c]  femModal(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x198c88
+C  [libcssolver.dylib+0x6ac4d0]  femModal(flutil::RunInfo&, std::__1::shared_ptr<Xmesh> const&, flbase::Prop&, flbase::Prop&, Solution&)+0x198bbc
+C  [libcssolver.dylib+0x29f7b8]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x241d14
+C  [libcssolver.dylib+0x2a1f7c]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x2444d8
+C  [libcssolver.dylib+0x1b7168]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x1596c4
+C  [libcssolver.dylib+0x1b5fc0]  flNull(flutil::RunInfo&, Sparse&, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, Sparse&, Sparse&, bool, Sparse&, bool, Sparse&, bool, std::__1::vector<unsigned long, flvec::allocator<unsigned long>>&, bool, NullFun&, bool, int&, HybridBlockConfiguration, int, bool)+0x15851c
+C  [libcssolver.dylib+0x1f19ac]

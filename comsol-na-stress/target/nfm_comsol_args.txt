@@ -1,0 +1,8 @@
+--model
+full-cell
+--material
+NFMZC
+--c-rate
+1
+--mode
+charge

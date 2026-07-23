@@ -28,6 +28,9 @@ public final class FullCellParameterBuilder {
         model.param().set("Rp_neg_small", "Rp_neg_small_base*radiusScale");
 
         model.param().set("rho_pos", m.density());
+        // Material property files are shared with the retained 2D particle
+        // model, where csmax is expressed as rho_p/M_formula.
+        model.param().set("rho_p", "rho_pos");
         model.param().set("M_formula", m.molarMass());
         model.param().set("csmax_pos", m.csmax());
         model.param().set("x_pos_initial", Double.toString(m.initialX()));
@@ -72,7 +75,6 @@ public final class FullCellParameterBuilder {
         model.param().set("i0_pos_base", m.exchangeCurrentDensity());
         model.param().set("i0_pos", "i0_pos_base*positiveKineticsScale");
 
-        model.param().set("F_const", "96485.33212[C/mol]");
         model.param().set("Capacity", m.capacity());
         model.param().set("Vp_pos", "4*pi*Rp_pos^3/3");
         model.param().set("Vneg_total", "2*4*pi*Rp_neg_large^3/3+2*4*pi*Rp_neg_small^3/3");

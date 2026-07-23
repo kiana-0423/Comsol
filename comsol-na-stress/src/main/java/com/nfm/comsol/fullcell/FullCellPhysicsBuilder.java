@@ -20,6 +20,14 @@ public final class FullCellPhysicsBuilder {
         model.component(ComsolTagUtils.FULL_COMPONENT).physics().create(ComsolTagUtils.FULL_BATTERY,
                 ComsolTagUtils.PHYSICS_LITHIUM_ION_BATTERY, ComsolTagUtils.FULL_GEOMETRY);
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY).selection().named(ComsolTagUtils.ELECTROLYTE_DOMAINS);
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("socicd1").feature("neges1").selection().named(ComsolTagUtils.ANODE_MATRIX);
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("socicd1").feature("poses1").selection().named(ComsolTagUtils.CATHODE_MATRIX);
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("socicd1").feature("negebs1").selection().named(ComsolTagUtils.NEGATIVE_COLLECTOR);
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("socicd1").feature("posebs1").selection().named(ComsolTagUtils.POSITIVE_COLLECTOR);
         // The 3D interface has no root-node cross-sectional-area setting. A_cell
         // remains a model parameter for applied-current and capacity conversion.
         // Electrolyte initial values belong to the default Initial Values feature.
@@ -28,44 +36,87 @@ public final class FullCellPhysicsBuilder {
 
         batteryCreate(model, "pcb_neg", ComsolTagUtils.FEATURE_POROUS_CONDUCTIVE_BINDER, 3,
                 ComsolTagUtils.ANODE_MATRIX);
-        batterySet(model, "pcb_neg", "sigmas", "sigma_binder");
-        batterySet(model, "pcb_neg", "epsilonl", "eps_an");
+        batterySet(model, "pcb_neg", "sigma_mat", "userdef");
+        batterySet(model, "pcb_neg", "sigma", "sigma_binder");
+        batterySet(model, "pcb_neg", "Tref_mat", "userdef");
+        batterySet(model, "pcb_neg", "alpha_mat", "userdef");
+        batterySet(model, "pcb_neg", "rho0_mat", "userdef");
+        batterySet(model, "pcb_neg", "AddVolumeChangeToElectrodeVolumeFraction", "0");
+        batterySet(model, "pcb_neg", "SubtractVolumeChangeFromElectrolyteVolumeFraction", "0");
+        batterySet(model, "pcb_neg", "epsl", "eps_an");
         batterySet(model, "pcb_neg", "taul", "tau_an");
         setElectrolyteProperties(model, "pcb_neg");
 
-        batteryCreate(model, "separator", ComsolTagUtils.FEATURE_SEPARATOR, 3,
-                ComsolTagUtils.SEPARATOR_DOMAIN);
-        batterySet(model, "separator", "epsilonl", "eps_sep");
-        batterySet(model, "separator", "taul", "tau_sep");
-        setElectrolyteProperties(model, "separator");
+        // sep1 is a mandatory default feature. Its locked selection is the
+        // remainder after the SOC node's negative/positive electrode domains.
+        batterySet(model, "sep1", "epsl", "eps_sep");
+        batterySet(model, "sep1", "taul", "tau_sep");
+        setElectrolyteProperties(model, "sep1");
 
         batteryCreate(model, "pcb_pos", ComsolTagUtils.FEATURE_POROUS_CONDUCTIVE_BINDER, 3,
                 ComsolTagUtils.CATHODE_MATRIX);
-        batterySet(model, "pcb_pos", "sigmas", "sigma_binder");
-        batterySet(model, "pcb_pos", "epsilonl", "eps_ca");
+        batterySet(model, "pcb_pos", "sigma_mat", "userdef");
+        batterySet(model, "pcb_pos", "sigma", "sigma_binder");
+        batterySet(model, "pcb_pos", "Tref_mat", "userdef");
+        batterySet(model, "pcb_pos", "alpha_mat", "userdef");
+        batterySet(model, "pcb_pos", "rho0_mat", "userdef");
+        batterySet(model, "pcb_pos", "AddVolumeChangeToElectrodeVolumeFraction", "0");
+        batterySet(model, "pcb_pos", "SubtractVolumeChangeFromElectrolyteVolumeFraction", "0");
+        batterySet(model, "pcb_pos", "epsl", "eps_ca");
         batterySet(model, "pcb_pos", "taul", "tau_ca");
         setElectrolyteProperties(model, "pcb_pos");
 
         batteryCreate(model, "ies_neg", ComsolTagUtils.FEATURE_INTERNAL_ELECTRODE_SURFACE, 2,
                 ComsolTagUtils.NEGATIVE_SURFACES);
+        batterySet(model, "ies_neg", "SolveForDissolvingDepositingConcentrationVariable", "0");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_neg").feature("er1").set("Eeq_mat", "userdef");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_neg").feature("er1").set("ElectrodeKinetics", "LithiumInsertion");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_neg").feature("er1").set("minput_concentration", "cNeg");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_neg").feature("er1").set("cEeqref_mat", "userdef");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_neg").feature("er1").set("cEeqref", "csmax_neg");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
                 .feature("ies_neg").feature("er1").set("Eeq", "Eeq_neg(xNegBattery)");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_neg").feature("er1").set("dEeqdT_mat", "userdef");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
                 .feature("ies_neg").feature("er1").set("i0", "i0_neg(xNegBattery)*negativeKineticsScale");
 
         batteryCreate(model, "ies_pos", ComsolTagUtils.FEATURE_INTERNAL_ELECTRODE_SURFACE, 2,
                 ComsolTagUtils.POSITIVE_SURFACE);
+        batterySet(model, "ies_pos", "SolveForDissolvingDepositingConcentrationVariable", "0");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_pos").feature("er1").set("Eeq_mat", "userdef");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_pos").feature("er1").set("ElectrodeKinetics", "LithiumInsertion");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_pos").feature("er1").set("minput_concentration", "cPos");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_pos").feature("er1").set("cEeqref_mat", "userdef");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_pos").feature("er1").set("cEeqref", "csmax_pos");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
                 .feature("ies_pos").feature("er1").set("Eeq", "Eeq_pos(xPosBattery)");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
+                .feature("ies_pos").feature("er1").set("dEeqdT_mat", "userdef");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_BATTERY)
                 .feature("ies_pos").feature("er1").set("i0", "i0_pos");
 
         batteryCreate(model, "ground_neg", ComsolTagUtils.FEATURE_ELECTRIC_POTENTIAL, 2,
                 ComsolTagUtils.NEGATIVE_COLLECTOR);
-        batterySet(model, "ground_neg", "phis0", "0[V]");
         batteryCreate(model, "current_pos", ComsolTagUtils.FEATURE_ELECTRODE_CURRENT, 2,
                 ComsolTagUtils.POSITIVE_COLLECTOR);
-        batterySet(model, "current_pos", "IsTotal", "runDirection*I_app");
+        // I_app is the current of one micrometre-scale representative cell
+        // (about 1e-12 A at 0.1C). Enforcing that tiny number as TotalCurrent
+        // badly scales the global boundary-potential constraint. COMSOL 6.4's
+        // equivalent AverageCurrentDensity form uses Ias and avoids that
+        // artificial singularity without changing the applied current.
+        batterySet(model, "current_pos", "ElectronicCurrentType", "AverageCurrentDensity");
+        batterySet(model, "current_pos", "Ias", "runDirection*j_app");
     }
 
     private void buildParticleDiffusion(Model model, String tag, String field, String initial,
@@ -91,16 +142,22 @@ public final class FullCellPhysicsBuilder {
         model.component(ComsolTagUtils.FULL_COMPONENT).physics().create(
                 ComsolTagUtils.FULL_SOLID, ComsolTagUtils.PHYSICS_SOLID, ComsolTagUtils.FULL_GEOMETRY);
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
-        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1").selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1").set("E_mat", "userdef");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1").set("E", "E_pos");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1").set("nu_mat", "userdef");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1").set("nu", "nu_pos");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1").set("rho_mat", "userdef");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1")
                 .create("chemical_strain", ComsolTagUtils.FEATURE_EXTERNAL_STRAIN, 3);
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1")
-                .feature("chemical_strain").selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
+                .feature("chemical_strain").set("StrainInput", "StrainTensor");
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1")
-                .feature("chemical_strain").set("e0Voigt",
-                new String[]{"epsilonChemPos", "epsilonChemPos", "epsilonChemPos", "0", "0", "0"});
+                .feature("chemical_strain").set("eext_src", "userdef");
+        model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID).feature("lemm1")
+                .feature("chemical_strain").set("eext",
+                new String[]{"epsilonChemPos", "0", "0",
+                        "0", "epsilonChemPos", "0",
+                        "0", "0", "epsilonChemPos"});
         // Free-particle mechanics: suppress only rigid-body modes, without constraining expansion.
         // VERIFY_WITH_GUI (6.4): confirm RigidMotionSuppression feature dimension/property.
         model.component(ComsolTagUtils.FULL_COMPONENT).physics(ComsolTagUtils.FULL_SOLID)
@@ -122,8 +179,13 @@ public final class FullCellPhysicsBuilder {
     }
 
     private void setElectrolyteProperties(Model model, String feature) {
+        batterySet(model, feature, "sigmal_mat", "userdef");
         batterySet(model, feature, "sigmal", "sigma_l_fun(cl/1[kmol/m^3])");
+        batterySet(model, feature, "Dl_mat", "userdef");
         batterySet(model, feature, "Dl", "Dl");
-        batterySet(model, feature, "tplus", "tplus");
+        batterySet(model, feature, "transpNum_mat", "userdef");
+        batterySet(model, feature, "transpNum", "tplus");
+        batterySet(model, feature, "fcl_mat", "userdef");
+        batterySet(model, feature, "fcl", "1");
     }
 }

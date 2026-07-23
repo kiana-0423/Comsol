@@ -30,31 +30,21 @@ public final class FullCellExporter {
         List<String> names = new ArrayList<>(metrics.keySet());
         String[] expressions = names.stream().map(metrics::get).toArray(String[]::new);
 
-        String tableTag = "tbl_" + id;
-        String evalTag = "eval_" + id;
-        model.result().table().create(tableTag, "Table");
-        model.result().numerical().create(evalTag, "EvalGlobal");
-        model.result().numerical(evalTag).set("data", dataset);
-        model.result().numerical(evalTag).set("expr", expressions);
-        model.result().numerical(evalTag).set("descr", names.toArray(new String[0]));
-        model.result().numerical(evalTag).set("looplevelinput", "all");
-        model.result().numerical(evalTag).set("table", tableTag);
-        model.result().numerical(evalTag).setResult();
-
         Path timeSeries = csvDir.resolve(stem + "_time_series.csv");
-        String timeExportTag = "ts_" + id;
-        model.result().export().create(timeExportTag, "Table");
-        model.result().export(timeExportTag).set("table", tableTag);
-        model.result().export(timeExportTag).set("filename", PathUtils.comsolPath(timeSeries));
-        model.result().export(timeExportTag).run();
-
+        List<double[]> metricSeries = new ArrayList<>();
         List<Double> finalValues = new ArrayList<>();
         for (int i = 0; i < expressions.length; i++) {
-            double[] values = series(model, "scalar_" + id + "_" + i, dataset, expressions[i]);
+            System.out.println("Evaluating export metric: " + names.get(i) + " = " + expressions[i]);
+            double[] values = names.get(i).equals("maximum_von_mises_Pa")
+                    ? volumeMaximumSeries(model, "scalar_" + id + "_" + i, dataset,
+                            "solid.mises")
+                    : series(model, "scalar_" + id + "_" + i, dataset, expressions[i]);
+            metricSeries.add(values);
             double value = values.length == 0 ? Double.NaN : values[values.length - 1];
             ValidationUtils.requireFinite(names.get(i), value);
             finalValues.add(value);
         }
+        writeTimeSeries(timeSeries, names, metricSeries);
         Path metricsFile = csvDir.resolve(stem + "_metrics.csv");
         writeMetrics(metricsFile, names, finalValues);
 
@@ -63,7 +53,7 @@ public final class FullCellExporter {
         model.result().export().create(radialTag, "Data");
         model.result().export(radialTag).set("data", ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE);
         model.result().export(radialTag).set("expr", new String[]{"sqrt((x-x_pos_center)^2+(y-y_pos_center)^2+(z-z_pos_center)^2)/Rp_pos",
-                "xPos", "cPos", "solid_full.mises", "epsilonChemPos"});
+                "xPos", "cPos", "solid.mises", "epsilonChemPos"});
         model.result().export(radialTag).set("unit", new String[]{"1", "1", "mol/m^3", "MPa", "1"});
         model.result().export(radialTag).set("looplevelinput", "all");
         model.result().export(radialTag).set("filename", PathUtils.comsolPath(radial));
@@ -76,9 +66,10 @@ public final class FullCellExporter {
                 "abs(I_app*t)/mp_pos/1[Ah/kg]");
         double[] rates = series(model, "crate_" + id, dataset, "C_rate");
         double[] averageX = series(model, "average_x_" + id, dataset, "ave_pos(xPos)");
-        double[] stressSeries = series(model, "stress_" + id, dataset, "max_pos(solid_full.mises)");
+        double[] stressSeries = volumeMaximumSeries(model, "stress_" + id, dataset,
+                "solid.mises");
         double[] averageStressSeries = series(model, "average_stress_" + id, dataset,
-                "ave_pos(solid_full.mises)");
+                "ave_pos(solid.mises)");
         double[] concentrationDeltaSeries = series(model, "concentration_delta_" + id, dataset,
                 "abs(ave_pos_surface(xPos)-at3(x_pos_center,y_pos_center,z_pos_center,xPos))");
         int peakStressLevel = maximumIndex(stressSeries)+1;
@@ -216,8 +207,7 @@ public final class FullCellExporter {
         String tag = "stress_samples_" + id;
         model.result().export().create(tag, "Data");
         model.result().export(tag).set("data", dataset);
-        model.result().export(tag).selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
-        model.result().export(tag).set("expr", new String[]{"solid_full.mises"});
+        model.result().export(tag).set("expr", new String[]{"solid.mises"});
         model.result().export(tag).set("unit", new String[]{"Pa"});
         model.result().export(tag).set("looplevelinput", "manual");
         model.result().export(tag).set("looplevel", new int[]{solutionLevels});
@@ -287,7 +277,6 @@ public final class FullCellExporter {
     }
 
     private void exportImage(Model model, String plot, String tag, int level, Path file) {
-        model.result(plot).set("looplevelinput", "manual");
         model.result(plot).set("looplevel", new int[]{level});
         model.result().export().create(tag, "Image3D");
         model.result().export(tag).set("plotgroup", plot);
@@ -326,6 +315,18 @@ public final class FullCellExporter {
         return values.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
+    private double[] volumeMaximumSeries(Model model, String tag, String dataset, String expression) {
+        model.result().numerical().create(tag, "MaxVolume");
+        model.result().numerical(tag).set("data", dataset);
+        model.result().numerical(tag).selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
+        model.result().numerical(tag).set("expr", new String[]{expression});
+        model.result().numerical(tag).set("looplevelinput", "all");
+        double[][] matrix = model.result().numerical(tag).getReal();
+        List<Double> values = new ArrayList<>();
+        for (double[] row : matrix) for (double value : row) values.add(value);
+        return values.stream().mapToDouble(Double::doubleValue).toArray();
+    }
+
     private void writeMetrics(Path file, List<String> names, List<Double> values) throws IOException {
         try (BufferedWriter out = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             out.write(String.join(",", names)); out.newLine();
@@ -334,6 +335,27 @@ public final class FullCellExporter {
                 out.write(Double.toString(values.get(i)));
             }
             out.newLine();
+        }
+    }
+
+    private void writeTimeSeries(Path file, List<String> names, List<double[]> series) throws IOException {
+        int rows = series.stream().mapToInt(values -> values.length).max().orElse(0);
+        for (int i = 0; i < series.size(); i++) {
+            if (series.get(i).length != rows) {
+                throw new IOException("Metric series length mismatch for " + names.get(i)
+                        + ": expected " + rows + ", found " + series.get(i).length);
+            }
+        }
+        try (BufferedWriter out = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
+            out.write(String.join(",", names));
+            out.newLine();
+            for (int row = 0; row < rows; row++) {
+                for (int column = 0; column < series.size(); column++) {
+                    if (column > 0) out.write(',');
+                    out.write(Double.toString(series.get(column)[row]));
+                }
+                out.newLine();
+            }
         }
     }
 

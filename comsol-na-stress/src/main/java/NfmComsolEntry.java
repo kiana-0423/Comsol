@@ -8,7 +8,7 @@ public final class NfmComsolEntry {
     private NfmComsolEntry() {}
 
     public static void main(String[] args) {
-        // The Unix launcher passes application options through NFM_COMSOL_ARGS;
+        // The Unix launcher passes application options through a project-local file;
         // do not forward any COMSOL-owned batch arguments to the application.
         com.nfm.comsol.Main.main(new String[0]);
     }

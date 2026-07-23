@@ -1,0 +1,34 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00000001321bea60, pid=20267, tid=72451
+#
+# JRE version: OpenJDK Runtime Environment Temurin-21.0.7+6 (21.0.7+6) (build 21.0.7+6-LTS)
+# Java VM: OpenJDK 64-Bit Server VM Temurin-21.0.7+6 (21.0.7+6-LTS, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
+# Problematic frame:
+# C  0x00000001321bea5c
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   https://github.com/adoptium/adoptium-support/issues
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Declipse.product=com.comsol.util.product -Dosgi.bundles=org.eclipse.update.configurator@1:start,org.eclipse.equinox.common@2:start,org.apache.felix.scr@1:start,org.eclipse.equinox.event@3:start,org.eclipse.core.runtime@start -Dosgi.bundles.defaultStartLevel=4 -Dosgi.startLevel=6 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dosgi.clean=true -Dorg.osgi.service.log.admin.loglevel=INFO -Dosgi.locking=none -Dosgi.configuration.area=@user.home/Library/Preferences/COMSOL/v64/configuration/comsol_44451388623 -Dosgi.instance.area=@user.home/Library/Preferences/COMSOL/v64/workspace/comsol_44451388623 -Dosgi.checkConfiguration=true -Dcs.logoutput=file -Dcs.logfileprefix=batch -Dcs.uniqueworkspace=on -Dcs.processuid=44451388623 -Xss4m -Xms40m -Xmx2g -XX:MaxMetaspaceSize=1g -Dlog4j2.formatMsgNoLookups=true 
+
+Host: "Mac15,6" arm64, 11 cores, 36G, Darwin 25.5.0, macOS 26.5.2 (25F84)
+Time: Thu Jul 23 23:07:54 2026 JST elapsed time: 77.623427 seconds (0d 0h 1m 17s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000b87b9b800):  JavaThread "BlockingImpl-0" [_thread_in_native, id=72451, stack(0x0000000179b84000,0x0000000179f87000) (4108K)]
+
+Stack: [0x0000000179b84000,0x0000000179f87000],  sp=0x0000000179f76e30,  free space=4043k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  0x00000001321bea5c
+C  0x00000001321ab9cc
+C  0x00000001321a5b48

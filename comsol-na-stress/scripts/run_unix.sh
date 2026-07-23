@@ -31,14 +31,25 @@ main_class="$classes/NfmComsolEntry.class"
   exit 3
 }
 
-encoded_args=
+args_file="$project_home/target/nfm_comsol_args.txt"
+comsol_tmp="${COMSOL_TMPDIR:-$project_home/target/comsol-tmp}"
+mkdir -p "$project_home/target"
+mkdir -p "$comsol_tmp"
+: > "$args_file"
 for arg in "$@"; do
-  case "$arg" in *\"*) echo 'ERROR: arguments containing a double quote are unsupported.' >&2; exit 4;; esac
-  encoded_args="$encoded_args \"$arg\""
+  case "$arg" in
+    *'
+'*) echo 'ERROR: arguments containing a newline are unsupported.' >&2; exit 4;;
+  esac
+  printf '%s\n' "$arg" >> "$args_file"
 done
 
 cd "$project_home"
 echo "COMSOL batch entry: $main_class"
-NFM_COMSOL_ARGS=${encoded_args# } "$comsol_cmd" batch \
+# This reviewed local application reads project properties/CSV files and writes
+# MPH/CSV/PNG/log outputs. COMSOL otherwise applies its application-method
+# sandbox to class-file batch entries and denies those required file accesses.
+"$comsol_cmd" -Dcs.enablesecurity=off -3drend "${COMSOL_3D_RENDERER:-sw}" \
+  -tmpdir "$comsol_tmp" batch \
   -classpathadd "$classes" \
   -inputfile "$main_class"

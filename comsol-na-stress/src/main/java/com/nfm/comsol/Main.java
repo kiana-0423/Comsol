@@ -14,6 +14,7 @@ import com.nfm.comsol.util.PathUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,18 +36,19 @@ public final class Main {
                     ? (cli.model.equals("full-cell") ? "cycle" : simulation.defaultMode())
                     : cli.mode;
 
-            if (!ModelUtil.getComsolVersion().startsWith("6.4")) {
-                throw new IllegalStateException("COMSOL 6.4 required, found " + ModelUtil.getComsolVersion());
+            String comsolVersion = ModelUtil.getComsolVersion();
+            if (!comsolVersion.matches(".*(^|[^0-9])6\\.4([^0-9]|$).*")) {
+                throw new IllegalStateException("COMSOL 6.4 required, found " + comsolVersion);
             }
 
             if (cli.model.equals("full-cell")) {
-                if (cli.exportOnly) throw new IllegalArgumentException("--export-only is not yet supported for --model full-cell");
                 FullCellConfig cell = ConfigLoader.loadFullCell(root,
                         cli.fullCellConfig == null
                                 ? Paths.get("config", "full_cell.properties") : Paths.get(cli.fullCellConfig));
                 FullCellBatchRunner batch = new FullCellBatchRunner();
                 FullCellSimulationRunner.RunOptions options =
-                        new FullCellSimulationRunner.RunOptions(cli.cRate, mode, cli.buildOnly, cli.smokeTest);
+                        new FullCellSimulationRunner.RunOptions(
+                                cli.cRate, mode, cli.buildOnly, cli.exportOnly, cli.smokeTest);
                 if (cli.all) {
                     System.out.println("Full-cell summary: " + batch.runAll(cell, simulation, options));
                 } else {
@@ -94,28 +96,24 @@ public final class Main {
         if (exit != 0) System.exit(exit);
     }
 
-    /** COMSOL batch owns its command line, so platform launch scripts pass application arguments via this variable. */
+    /**
+     * COMSOL batch owns its command line and its security manager blocks getenv.
+     * The Unix launcher therefore writes one application argument per line.
+     */
     private static String[] effectiveArgs(String[] raw) {
         if (raw != null && raw.length > 0) return raw;
-        String env = System.getenv("NFM_COMSOL_ARGS");
-        if (env == null || env.trim().isEmpty()) return new String[0];
-        return splitCommandLine(env).toArray(new String[0]);
-    }
-
-    private static List<String> splitCommandLine(String text) {
-        List<String> tokens = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean quoted = false;
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c == '"') quoted = !quoted;
-            else if (Character.isWhitespace(c) && !quoted) {
-                if (current.length() > 0) { tokens.add(current.toString()); current.setLength(0); }
-            } else current.append(c);
+        Path argsFile = Paths.get("target", "nfm_comsol_args.txt");
+        if (!Files.isRegularFile(argsFile)) return new String[0];
+        try {
+            List<String> lines = Files.readAllLines(argsFile);
+            List<String> args = new ArrayList<>();
+            for (String line : lines) {
+                if (!line.isEmpty()) args.add(line);
+            }
+            return args.toArray(new String[0]);
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException("Cannot read COMSOL application arguments: " + argsFile, ex);
         }
-        if (quoted) throw new IllegalArgumentException("Unclosed quote in NFM_COMSOL_ARGS");
-        if (current.length() > 0) tokens.add(current.toString());
-        return tokens;
     }
 
     private static final class Cli {

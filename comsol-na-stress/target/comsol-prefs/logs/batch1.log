@@ -1,0 +1,235 @@
+2026-07-23T22:16:09.870+0900 INFO     Loggers starting up... [com.comsol.logger]
+2026-07-23T22:16:09.871+0900 INFO     File logger initialized. [com.comsol.logger]
+2026-07-23T22:16:09.871+0900 INFO     Loggers registered with log service. [com.comsol.logger]
+2026-07-23T22:16:09.872+0900 INFO     Configured log levels with logger admin. [com.comsol.logger]
+2026-07-23T22:16:09.872+0900 INFO     Loggers completed starting. [com.comsol.logger]
+2026-07-23T22:16:09.872+0900 INFO     BundleEvent STARTED [com.comsol.logger]
+2026-07-23T22:16:09.876+0900 INFO     COMSOL 6.4.0.293 starting. [com.comsol.util]
+2026-07-23T22:16:10.031+0900 INFO     DYLD_LIBRARY_PATH=/Applications/COMSOL64/Multiphysics/ext/graphicsmagick/macarm64/:/Applications/COMSOL64/Multiphysics/ext/dnn/macarm64:/Applications/COMSOL64/Multiphysics/ext/dcm/macarm64:/Applications/COMSOL64/Multiphysics/ext/cadimport/macarm64:/Applications/COMSOL64/Multiphysics/lib/macarm64 [com.comsol.util]
+2026-07-23T22:16:10.032+0900 INFO     BundleEvent STARTING [com.comsol.batch]
+2026-07-23T22:16:10.032+0900 INFO     BundleEvent STARTED [com.comsol.batch]
+2026-07-23T22:16:10.032+0900 INFO     BundleEvent STARTING [org.eclipse.core.resources]
+2026-07-23T22:16:10.032+0900 INFO     ServiceEvent REGISTERED [org.eclipse.core.resources] {org.eclipse.osgi.service.debug.DebugOptionsListener}
+2026-07-23T22:16:10.034+0900 INFO     BundleEvent STARTING [org.eclipse.core.jobs]
+2026-07-23T22:16:10.038+0900 INFO     ServiceEvent REGISTERED [org.eclipse.core.jobs] {org.eclipse.osgi.service.debug.DebugOptionsListener}
+2026-07-23T22:16:10.040+0900 INFO     ServiceEvent REGISTERED [org.eclipse.core.jobs] {org.eclipse.core.runtime.jobs.IJobManager}
+2026-07-23T22:16:10.040+0900 INFO     BundleEvent STARTED [org.eclipse.core.jobs]
+2026-07-23T22:16:10.104+0900 INFO     BundleEvent STARTING [org.eclipse.core.filesystem]
+2026-07-23T22:16:10.104+0900 INFO     BundleEvent STARTED [org.eclipse.core.filesystem]
+2026-07-23T22:16:10.105+0900 INFO     ServiceEvent REGISTERED [org.eclipse.core.resources] {org.eclipse.core.resources.IWorkspace}
+2026-07-23T22:16:10.105+0900 INFO     ServiceEvent REGISTERED [org.eclipse.core.resources] {org.eclipse.core.resources.IResourceChangeListener}
+2026-07-23T22:16:10.109+0900 INFO     BundleEvent STARTED [org.eclipse.core.resources]
+2026-07-23T22:16:10.110+0900 INFO     BundleEvent STARTING [com.comsol.nativeutil]
+2026-07-23T22:16:10.111+0900 INFO     BundleEvent STARTED [com.comsol.nativeutil]
+2026-07-23T22:16:10.111+0900 INFO     BundleEvent STARTING [com.comsol.nativejni]
+2026-07-23T22:16:10.509+0900 INFO     BundleEvent STARTED [com.comsol.nativejni]
+2026-07-23T22:16:10.518+0900 INFO     BundleEvent STARTING [com.comsol.bridge]
+2026-07-23T22:16:10.518+0900 INFO     BundleEvent STARTED [com.comsol.bridge]
+2026-07-23T22:16:10.520+0900 INFO     BundleEvent STARTING [com.comsol.widgets]
+2026-07-23T22:16:10.520+0900 INFO     BundleEvent STARTED [com.comsol.widgets]
+2026-07-23T22:16:10.520+0900 INFO     BundleEvent STARTING [com.comsol.gui]
+2026-07-23T22:16:10.520+0900 INFO     BundleEvent STARTED [com.comsol.gui]
+2026-07-23T22:16:10.522+0900 INFO     BundleEvent STARTING [com.comsol.guimph]
+2026-07-23T22:16:10.522+0900 INFO     BundleEvent STARTED [com.comsol.guimph]
+2026-07-23T22:16:10.522+0900 INFO     BundleEvent STARTING [com.comsol.model]
+2026-07-23T22:16:10.526+0900 INFO     BundleEvent STARTING [com.comsol.nativemph]
+2026-07-23T22:16:10.526+0900 INFO     BundleEvent STARTED [com.comsol.nativemph]
+2026-07-23T22:16:10.528+0900 INFO     ServiceEvent REGISTERED [com.comsol.model] {org.osgi.service.url.URLStreamHandlerService}
+2026-07-23T22:16:10.528+0900 INFO     ServiceEvent REGISTERED [com.comsol.model] {org.osgi.service.url.URLStreamHandlerService}
+2026-07-23T22:16:10.528+0900 INFO     BundleEvent STARTED [com.comsol.model]
+2026-07-23T22:16:10.530+0900 INFO     BundleEvent STARTING [com.comsol.renderer]
+2026-07-23T22:16:10.578+0900 INFO     BundleEvent STARTED [com.comsol.renderer]
+2026-07-23T22:16:10.714+0900 INFO     Warning: Could not set stored value 'all' for preference security.external.filepermission [com.comsol.util]
+2026-07-23T22:16:10.745+0900 INFO     Licensed vendor string = L,5ff77fdff7f5ffff5 [com.comsol.util]
+2026-07-23T22:16:10.746+0900 INFO     BundleEvent STARTING [com.comsol.guigraphics]
+2026-07-23T22:16:10.746+0900 INFO     BundleEvent STARTED [com.comsol.guigraphics]
+2026-07-23T22:16:10.793+0900 INFO     Warning: Could not set stored value 'all' for preference security.external.filepermission [com.comsol.util]
+2026-07-23T22:16:10.805+0900 INFO     Connection sequence finalized for session: [UserName=null, Connected=true, Local=true, ClientHost=GuonoMacBook-Pro.local, ClientPlatform=MACOSX, ClientType=UNKNOWN, ClientRoot=/Applications/COMSOL64/Multiphysics] [com.comsol.bridge]
+2026-07-23T22:16:10.810+0900 INFO     BundleEvent STARTING [com.comsol.loader]
+2026-07-23T22:16:10.810+0900 INFO     BundleEvent STARTED [com.comsol.loader]
+2026-07-23T22:16:10.925+0900 INFO     Starting methodexec process... [com.comsol.util]
+2026-07-23T22:16:11.987+0900 INFO     Methodexec process started with pid:8904 [com.comsol.util]
+2026-07-23T22:16:12.406+0900 INFO     Methodexec process with pid:8904 has been shut down. [com.comsol.util]
+2026-07-23T22:16:12.410+0900 ERROR     [com.comsol.bridge]
+Exception:
+	com.comsol.methodexec.util.MECPCommException: java.io.EOFException
+	(rethrown as com.comsol.util.exceptions.FlException)
+Messages:
+	Error loading java class
+
+	java.io.EOFException
+	- Class: NfmComsolEntry
+
+Stack trace:
+at com.comsol.methodexec.comm.c.b(SourceFile:53)
+	at com.comsol.methodexecmph.a.a.a(SourceFile:190)
+	at com.comsol.methodexecmph.b.a(SourceFile:120)
+	at com.comsol.model.util.ServerModelUtil.runExternalClass(SourceFile:649)
+	at com.comsol.model.util.ModelUtilInternal.runExternalClass(SourceFile:195)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at com.comsol.bridge.command.b.a(SourceFile:161)
+	at com.comsol.bridge.command.c.run(SourceFile:63)
+	at com.comsol.bridge.command.k.c(SourceFile:227)
+	at com.comsol.bridge.command.k$1.run(SourceFile:100)
+	at com.comsol.util.thread.SuspendableTasks$1.run(SourceFile:111)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.io.EOFException
+	at java.base/java.io.DataInputStream.readFully(Unknown Source)
+	at java.base/java.io.DataInputStream.readInt(Unknown Source)
+	at com.comsol.methodexec.comm.b.b(SourceFile:198)
+	at com.comsol.methodexec.comm.b.b(SourceFile:113)
+	at com.comsol.methodexec.comm.c.b(SourceFile:51)
+	... 14 more
+
+2026-07-23T22:16:12.415+0900 ERROR    Error_loading_java_class [com.comsol.util]
+2026-07-23T22:16:12.415+0900 ERROR    Error_loading_java_class [com.comsol.util]
+2026-07-23T22:16:12.416+0900 ERROR    An error occurred [com.comsol.util]
+Exception:
+	com.comsol.util.exceptions.FlException: 加载 Java 类时出错。
+Messages:
+	加载 Java 类时出错。
+
+	java.io.EOFException
+	- 类: NfmComsolEntry
+
+Stack trace:
+at com.comsol.methodexec.comm.c.b(SourceFile:53)
+	at com.comsol.methodexecmph.a.a.a(SourceFile:190)
+	at com.comsol.methodexecmph.b.a(SourceFile:120)
+	at com.comsol.methodexecmph.b.a(SourceFile:132)
+	at com.comsol.model.util.ServerModelUtil.runExternalClass(SourceFile:649)
+	at com.comsol.model.util.ModelUtilInternal.runExternalClass(SourceFile:195)
+	at jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at com.comsol.bridge.command.b.a(SourceFile:161)
+	at com.comsol.bridge.command.c.run(SourceFile:63)
+	at com.comsol.bridge.command.k.c(SourceFile:227)
+	at com.comsol.bridge.command.k$1.run(SourceFile:100)
+	at com.comsol.util.thread.SuspendableTasks$1.run(SourceFile:111)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+
+2026-07-23T22:16:12.420+0900 INFO     BundleEvent STARTING [com.comsol.cluster]
+2026-07-23T22:16:12.421+0900 INFO     BundleEvent STARTED [com.comsol.cluster]
+2026-07-23T22:16:12.427+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.equinox.app] {org.osgi.service.application.ApplicationHandle, org.eclipse.equinox.app.IApplicationContext}
+2026-07-23T22:16:12.427+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.osgi] {org.eclipse.osgi.service.runnable.ApplicationLauncher}
+2026-07-23T22:16:12.427+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.osgi] {org.eclipse.osgi.service.runnable.StartupMonitor}
+2026-07-23T22:16:12.428+0900 INFO     BundleEvent STOPPING [org.eclipse.osgi]
+2026-07-23T22:16:12.431+0900 INFO     BundleEvent STOPPING [com.comsol.guiswt]
+2026-07-23T22:16:12.432+0900 INFO     BundleEvent STOPPED [com.comsol.guiswt]
+2026-07-23T22:16:12.432+0900 INFO     BundleEvent STOPPING [com.comsol.widgets.swt]
+2026-07-23T22:16:12.432+0900 INFO     BundleEvent STOPPED [com.comsol.widgets.swt]
+2026-07-23T22:16:12.432+0900 INFO     BundleEvent STOPPING [org.eclipse.ui]
+2026-07-23T22:16:12.432+0900 INFO     BundleEvent STOPPED [org.eclipse.ui]
+2026-07-23T22:16:12.432+0900 INFO     BundleEvent STOPPING [org.eclipse.ui.workbench]
+2026-07-23T22:16:12.433+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.ui.workbench] {org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution}
+2026-07-23T22:16:12.438+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.ui.workbench] {org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution, org.eclipse.ui.internal.CommandToModelProcessor}
+2026-07-23T22:16:12.438+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.ui.workbench] {org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution, org.eclipse.ui.internal.ContextToModelProcessor}
+2026-07-23T22:16:12.438+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.ui.workbench] {org.osgi.service.event.EventHandler}
+2026-07-23T22:16:12.438+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.ui.workbench] {org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider}
+2026-07-23T22:16:12.438+0900 INFO     BundleEvent STOPPED [org.eclipse.ui.workbench]
+2026-07-23T22:16:12.438+0900 INFO     BundleEvent STOPPING [org.eclipse.e4.ui.workbench.addons.swt]
+2026-07-23T22:16:12.439+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.addons.swt] {org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution}
+2026-07-23T22:16:12.439+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.addons.swt] {org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution}
+2026-07-23T22:16:12.440+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.addons.swt] {org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution}
+2026-07-23T22:16:12.440+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.addons.swt] {org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution}
+2026-07-23T22:16:12.440+0900 INFO     BundleEvent STOPPED [org.eclipse.e4.ui.workbench.addons.swt]
+2026-07-23T22:16:12.440+0900 INFO     BundleEvent STOPPING [org.eclipse.e4.ui.workbench.renderers.swt]
+2026-07-23T22:16:12.441+0900 INFO     BundleEvent STOPPED [org.eclipse.e4.ui.workbench.renderers.swt]
+2026-07-23T22:16:12.441+0900 INFO     BundleEvent STOPPING [org.eclipse.e4.ui.workbench.swt]
+2026-07-23T22:16:12.441+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.swt] {org.eclipse.e4.core.internal.contexts.IEclipseContextDebugger}
+2026-07-23T22:16:12.441+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.swt] {org.eclipse.ui.testing.TestableObject}
+2026-07-23T22:16:12.441+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.swt] {org.eclipse.e4.core.contexts.IContextFunction}
+2026-07-23T22:16:12.441+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench.swt] {org.eclipse.e4.core.contexts.IContextFunction}
+2026-07-23T22:16:12.441+0900 INFO     BundleEvent STOPPED [org.eclipse.e4.ui.workbench.swt]
+2026-07-23T22:16:12.442+0900 INFO     BundleEvent STOPPING [com.comsol.extbridge]
+2026-07-23T22:16:12.442+0900 INFO     BundleEvent STOPPED [com.comsol.extbridge]
+2026-07-23T22:16:12.442+0900 INFO     BundleEvent STOPPING [com.comsol.guidb]
+2026-07-23T22:16:12.442+0900 INFO     BundleEvent STOPPED [com.comsol.guidb]
+2026-07-23T22:16:12.442+0900 INFO     BundleEvent STOPPING [com.comsol.dbmodel]
+2026-07-23T22:16:12.442+0900 INFO     BundleEvent STOPPED [com.comsol.dbmodel]
+2026-07-23T22:16:12.443+0900 INFO     BundleEvent STOPPING [com.comsol.bridge]
+2026-07-23T22:16:12.443+0900 INFO     BundleEvent STOPPED [com.comsol.bridge]
+2026-07-23T22:16:12.443+0900 INFO     BundleEvent STOPPING [org.eclipse.e4.ui.bindings]
+2026-07-23T22:16:12.443+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.bindings] {org.eclipse.e4.core.contexts.IContextFunction}
+2026-07-23T22:16:12.443+0900 INFO     BundleEvent STOPPED [org.eclipse.e4.ui.bindings]
+2026-07-23T22:16:12.443+0900 INFO     BundleEvent STOPPING [org.eclipse.e4.ui.workbench]
+2026-07-23T22:16:12.443+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench] {org.eclipse.e4.core.contexts.IContextFunction}
+2026-07-23T22:16:12.443+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench] {org.eclipse.e4.core.contexts.IContextFunction}
+2026-07-23T22:16:12.444+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench] {org.eclipse.e4.ui.internal.workbench.ModelAssembler}
+2026-07-23T22:16:12.444+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench] {org.eclipse.e4.core.contexts.IContextFunction}
+2026-07-23T22:16:12.444+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench] {org.eclipse.e4.core.contexts.IContextFunction}
+2026-07-23T22:16:12.445+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.workbench] {org.eclipse.osgi.service.debug.DebugOptionsListener}
+2026-07-23T22:16:12.445+0900 INFO     BundleEvent STOPPED [org.eclipse.e4.ui.workbench]
+2026-07-23T22:16:12.445+0900 INFO     BundleEvent STOPPING [org.eclipse.e4.ui.model.workbench]
+2026-07-23T22:16:12.445+0900 INFO     BundleEvent STOPPED [org.eclipse.e4.ui.model.workbench]
+2026-07-23T22:16:12.445+0900 INFO     BundleEvent STOPPING [com.comsol.batch]
+2026-07-23T22:16:12.445+0900 INFO     BundleEvent STOPPED [com.comsol.batch]
+2026-07-23T22:16:12.445+0900 INFO     BundleEvent STOPPING [com.comsol.guipost]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPED [com.comsol.guipost]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPING [com.comsol.guigeommesh]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPED [com.comsol.guigeommesh]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPING [com.comsol.guitdp]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPED [com.comsol.guitdp]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPING [com.comsol.guimph]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPED [com.comsol.guimph]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPING [com.comsol.post]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPED [com.comsol.post]
+2026-07-23T22:16:12.446+0900 INFO     BundleEvent STOPPING [com.comsol.guigraphics]
+2026-07-23T22:16:12.447+0900 INFO     BundleEvent STOPPED [com.comsol.guigraphics]
+2026-07-23T22:16:12.447+0900 INFO     BundleEvent STOPPING [com.comsol.geommesh]
+2026-07-23T22:16:12.447+0900 INFO     BundleEvent STOPPED [com.comsol.geommesh]
+2026-07-23T22:16:12.447+0900 INFO     BundleEvent STOPPING [com.comsol.cluster]
+2026-07-23T22:16:12.447+0900 INFO     BundleEvent STOPPED [com.comsol.cluster]
+2026-07-23T22:16:12.447+0900 INFO     BundleEvent STOPPING [com.comsol.model]
+2026-07-23T22:16:12.447+0900 INFO     Loggers un-registered with log service. [com.comsol.logger]
+2026-07-23T22:16:12.447+0900 INFO     ServiceEvent UNREGISTERING [com.comsol.model] {org.osgi.service.url.URLStreamHandlerService}
+2026-07-23T22:16:12.447+0900 INFO     Logger admin removed. [com.comsol.logger]
+2026-07-23T22:16:12.447+0900 INFO     ServiceEvent UNREGISTERING [com.comsol.model] {org.osgi.service.url.URLStreamHandlerService}
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPED [com.comsol.model]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPING [com.comsol.servicebridge]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPED [com.comsol.servicebridge]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPING [com.comsol.testcore]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPED [com.comsol.testcore]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPING [com.comsol.gui]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPED [com.comsol.gui]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPING [com.comsol.textrenderer]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPED [com.comsol.textrenderer]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPING [com.comsol.graphicsswing]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPED [com.comsol.graphicsswing]
+2026-07-23T22:16:12.448+0900 INFO     BundleEvent STOPPING [com.comsol.widgets]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPED [com.comsol.widgets]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPING [com.comsol.renderer]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPED [com.comsol.renderer]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPING [com.comsol.nativemph]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPED [com.comsol.nativemph]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPING [com.comsol.nativeutil]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPED [com.comsol.nativeutil]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPING [com.comsol.nativebasicutil]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPED [com.comsol.nativebasicutil]
+2026-07-23T22:16:12.449+0900 INFO     BundleEvent STOPPING [com.comsol.nativejni]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPED [com.comsol.nativejni]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPING [com.comsol.dbbridge]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPED [com.comsol.dbbridge]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPING [com.comsol.loader]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPED [com.comsol.loader]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPING [com.comsol.util]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPED [com.comsol.util]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPING [org.eclipse.emf.ecore.xmi]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPED [org.eclipse.emf.ecore.xmi]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPING [org.eclipse.emf.edit]
+2026-07-23T22:16:12.450+0900 INFO     BundleEvent STOPPED [org.eclipse.emf.edit]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPING [org.eclipse.emf.ecore.change]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPED [org.eclipse.emf.ecore.change]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPING [org.eclipse.emf.ecore]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPED [org.eclipse.emf.ecore]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPING [org.eclipse.emf.common]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPED [org.eclipse.emf.common]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPING [org.eclipse.e4.ui.css.swt.theme]
+2026-07-23T22:16:12.451+0900 INFO     ServiceEvent UNREGISTERING [org.eclipse.e4.ui.css.swt.theme] {org.eclipse.e4.ui.css.swt.theme.IThemeManager}
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPED [org.eclipse.e4.ui.css.swt.theme]
+2026-07-23T22:16:12.451+0900 INFO     BundleEvent STOPPING [com.comsol.logger]

@@ -1,0 +1,84 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x0000000132f19340, pid=17675, tid=76547
+#
+# JRE version: OpenJDK Runtime Environment Temurin-21.0.7+6 (21.0.7+6) (build 21.0.7+6-LTS)
+# Java VM: OpenJDK 64-Bit Server VM Temurin-21.0.7+6 (21.0.7+6-LTS, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, bsd-aarch64)
+# Problematic frame:
+# C  0x00000001331377d0
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   https://github.com/adoptium/adoptium-support/issues
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Declipse.product=com.comsol.util.product -Dosgi.bundles=org.eclipse.update.configurator@1:start,org.eclipse.equinox.common@2:start,org.apache.felix.scr@1:start,org.eclipse.equinox.event@3:start,org.eclipse.core.runtime@start -Dosgi.bundles.defaultStartLevel=4 -Dosgi.startLevel=6 -XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dosgi.clean=true -Dorg.osgi.service.log.admin.loglevel=INFO -Dosgi.locking=none -Dosgi.configuration.area=@user.home/Library/Preferences/COMSOL/v64/configuration/comsol_33300379428 -Dosgi.instance.area=@user.home/Library/Preferences/COMSOL/v64/workspace/comsol_33300379428 -Dosgi.checkConfiguration=true -Dcs.logoutput=file -Dcs.logfileprefix=batch -Dcs.uniqueworkspace=on -Dcs.processuid=33300379428 -Xss4m -Xms40m -Xmx2g -XX:MaxMetaspaceSize=1g -Dlog4j2.formatMsgNoLookups=true 
+
+Host: "Mac15,6" arm64, 11 cores, 36G, Darwin 25.5.0, macOS 26.5.2 (25F84)
+Time: Thu Jul 23 22:50:38 2026 JST elapsed time: 140.255191 seconds (0d 0h 2m 20s)
+
+---------------  T H R E A D  ---------------
+
+Current thread is native thread
+
+Stack: [0x000000017cd0c000,0x000000017d50b000],  sp=0x000000017d509a30,  free space=8182k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  0x00000001331377d0
+C  0x00000001330dfdf4
+C  0x0000000132fa25a8
+C  [libomp.dylib+0x6fffc]  __kmp_GOMP_microtask_wrapper(int*, int*, void (*)(void*), void*)+0x38
+C  [libomp.dylib+0x88fec]  __kmp_invoke_microtask+0x9c
+
+siginfo: si_signo: 11 (SIGSEGV), si_code: 2 (SEGV_ACCERR), si_addr: 0x0000000132f19340
+
+Registers:
+ x0=0x000000017d509b38  x1=0x00000004b7523dc8  x2=0x00000004b7523dc8  x3=0x00000000000247c7
+ x4=0x000000017d50aa88  x5=0x000000000000025e  x6=0x0000000b34ff15e0  x7=0x000000000000002a
+ x8=0x000000017d50a2f0  x9=0x000000017d50a3f8 x10=0x0000000000000144 x11=0x000000017d50a2d8
+x12=0x000000000001358a x13=0x000000000000002a x14=0x0000000000000029 x15=0x000000000000004e
+x16=0x952d000b4c3fd680 x17=0x0000000827251370 x18=0x0000000000000000 x19=0x000000017d509b80
+x20=0x00000004b7400000 x21=0x000000000000636c x22=0x0000000b34ff16b0 x23=0x000000017d50a2d8
+x24=0x0000000b47ae8808 x25=0x0000000b47ae8878 x26=0x0000000000000144 x27=0x000000017d50a3f0
+x28=0x0000000b47ae8340  fp=0x000000017d509a30  lr=0x00000001331377d4  sp=0x000000017d509a30
+pc=0x0000000132f19340 cpsr=0x0000000080001000
+
+Top of Stack: (sp=0x000000017d509a30)
+0x000000017d509a30:   000000017d509fd0 00000001330dfdf4
+0x000000017d509a40:   000000017d50aa78 000000017d50aa88
+0x000000017d509a50:   0000000b35a84000 000000000000002a
+0x000000017d509a60:   0000000000000000 0000000b34ff1608
+0x000000017d509a70:   000000000000011a 0000000600400000
+0x000000017d509a80:   0000000000000144 0000000b47ae8878
+0x000000017d509a90:   000000017d50aaa8 0000000000000000
+0x000000017d509aa0:   000000017d50a2f0 00000001330e10f0
+0x000000017d509ab0:   0000000102d4e740 0000000b54f2f440
+0x000000017d509ac0:   0000000b34ff15e0 000000000000029c
+0x000000017d509ad0:   0000000000000000 0000000600400000
+0x000000017d509ae0:   0000000102d4fa98 00000000008dd67a
+0x000000017d509af0:   0000000b5534ea40 0000000b4c3fd6c0
+0x000000017d509b00:   000000000000029c 0000000000000000
+0x000000017d509b10:   0000000000000000 0000000000000000
+0x000000017d509b20:   000000000000002a 000000000000636c
+0x000000017d509b30:   0000000000000000 0000000000000000
+0x000000017d509b40:   000000000005ffd4 000000000000011a
+0x000000017d509b50:   0000000000000000 0000000000000000
+0x000000017d509b60:   0000000000000000 0000000000000000
+0x000000017d509b70:   0000000000000000 0000000102d4e740
+0x000000017d509b80:   0000000102d4fa98 0000000b4fd8c840
+0x000000017d509b90:   0000000000000000 0000000b5534ea40
+0x000000017d509ba0:   000000017d509ca0 0000000102cce980
+0x000000017d509bb0:   00000000000000d0 0000050100000000
+0x000000017d509bc0:   0000000000000000 1d272013b7fc00b3
+0x000000017d509bd0:   0000000000000001 0000000000000000
+0x000000017d509be0:   0000000000000001 0000000102d4e740
+0x000000017d509bf0:   0000000000000000 0000000102d46c80
+0x000000017d509c00:   0000000b54d84a40 0000000102d1bfc4
+0x000000017d509c10:   0000000000000004 0000000b54f2f440
+0x000000017d509c20:   0000000000000005 0000000b5534ea40 
+
+Instructions: (pc=0x00000001331377d0)
+0x00000001331376d0:   ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 

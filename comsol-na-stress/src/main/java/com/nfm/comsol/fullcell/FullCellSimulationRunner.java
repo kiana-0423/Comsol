@@ -25,25 +25,51 @@ public final class FullCellSimulationRunner {
         String mode = options.mode().equals("cycle") ? "cycle" : options.mode();
         String stem = "FULLCELL_" + PathUtils.caseStem(material.name(), mode, options.cRate())
                 + (sensitivity.name().equals("baseline") ? "" : "_" + sensitivity.name());
+        Path mph = simulation.outputRoot().resolve("mph").resolve(stem + ".mph");
         snapshotInputs(material, cell, simulation, sensitivity, stem);
         Model model = null;
         try {
+            if (options.exportOnly()) {
+                if (!Files.isRegularFile(mph)) {
+                    throw new java.io.IOException("Existing mph not found for --export-only: " + mph);
+                }
+                if (!mode.equals("charge")) {
+                    throw new IllegalArgumentException(
+                            "Full-cell --export-only currently supports --mode charge");
+                }
+                model = ModelUtil.load("FullCellModel", PathUtils.comsolPath(mph));
+                FullCellResultBuilder results = new FullCellResultBuilder();
+                results.bindSolution(model, "dset1");
+                FullCellExporter.ExportResult exported = exporter.export(model, results, material, cell,
+                        simulation, "dset1", "charge", stem + "_charge");
+                int elements = model.component(ComsolTagUtils.FULL_COMPONENT)
+                        .mesh(ComsolTagUtils.FULL_MESH).getNumElem();
+                return new RunResult(stem, mph, exported.metrics(), exported.maximumStress(),
+                        exported.averageStress(), exported.stressP95(), exported.averageX(),
+                        exported.concentrationDelta(), exported.massBalanceError(), elements,
+                        exported.quantitativeReady());
+            }
             FullCellModelBuilder.BuiltFullCell built =
                     builder.build(material, cell, simulation, options.cRate(), options.smokeTest(), sensitivity);
             model = built.model();
-            Path mph = simulation.outputRoot().resolve("mph").resolve(stem + ".mph");
             if (options.buildOnly()) {
                 model.save(PathUtils.comsolPath(mph));
                 return new RunResult(stem, mph, null, Double.NaN, Double.NaN, Double.NaN,
                         Double.NaN, Double.NaN, Double.NaN, -1, false);
             }
 
-            model.study(ComsolTagUtils.FULL_STUDY_INIT).run();
             model.param().set("runDirection", "1");
-            built.studies().prepareAndRun(model, ComsolTagUtils.FULL_STUDY_CHARGE, "sol2", simulation, false);
-            built.results().bindSolution(model, "dset2");
+            String chargeSolution = built.studies().prepareAndRun(model,
+                    ComsolTagUtils.FULL_STUDY_CHARGE, "sol1",
+                    simulation, false, options.smokeTest());
+            System.out.println("Charge solution sequence: " + chargeSolution);
+            String chargeDataset = findSolutionDataset(model, chargeSolution, "dset1");
+            built.results().bindSolution(model, chargeDataset);
+            // Preserve the converged solution before postprocessing so an export failure
+            // never discards a successful, potentially expensive solve.
+            model.save(PathUtils.comsolPath(mph));
             FullCellExporter.ExportResult exported = exporter.export(model, built.results(), material, cell,
-                    simulation, "dset2", "charge", stem + "_charge");
+                    simulation, chargeDataset, "charge", stem + "_charge");
             double peakStress = exported.maximumStress();
             double maximumAverageStress = exported.averageStress();
             double stressP95 = exported.stressP95();
@@ -54,10 +80,27 @@ public final class FullCellSimulationRunner {
 
             if (options.mode().equals("discharge") || options.mode().equals("cycle")) {
                 model.param().set("runDirection", "-1");
-                built.studies().prepareAndRun(model, ComsolTagUtils.FULL_STUDY_DISCHARGE, "sol3", simulation, true);
-                built.results().bindSolution(model, "dset3");
+                // A charge cutoff can leave the negative electrode too close to
+                // depletion to sustain even a microsecond of further charge.
+                // Start discharge at 0.1 of the requested rate (a reversal
+                // already qualified by the 0.1C cycles), then reach the full
+                // requested discharge current smoothly over 10 seconds.
+                model.component(ComsolTagUtils.FULL_COMPONENT)
+                        .physics(ComsolTagUtils.FULL_BATTERY).feature("current_pos")
+                        .set("Ias", options.cRate() >= 0.5
+                                ? "-j_app*(0.1+0.9*min(t/10[s],1))"
+                                : "runDirection*j_app");
+                String dischargeSolution = built.studies().prepareAndRun(model,
+                        ComsolTagUtils.FULL_STUDY_DISCHARGE, "sol2",
+                        simulation, true, options.smokeTest());
+                System.out.println("Discharge solution sequence: " + dischargeSolution);
+                String dischargeDataset = findSolutionDataset(model, dischargeSolution, "dset2");
+                built.results().bindSolution(model, dischargeDataset);
+                // Preserve both converged cycle legs before postprocessing, just
+                // as for charge, so export failures cannot discard the solve.
+                model.save(PathUtils.comsolPath(mph));
                 exported = exporter.export(model, built.results(), material, cell,
-                        simulation, "dset3", "discharge", stem + "_discharge");
+                        simulation, dischargeDataset, "discharge", stem + "_discharge");
                 peakStress = Math.max(peakStress, exported.maximumStress());
                 maximumAverageStress = Math.max(maximumAverageStress, exported.averageStress());
                 stressP95 = Math.max(stressP95, exported.stressP95());
@@ -74,6 +117,18 @@ public final class FullCellSimulationRunner {
         } finally {
             if (model != null) ModelUtil.remove(model.tag());
         }
+    }
+
+    private String findSolutionDataset(Model model, String solutionTag, String fallback) {
+        for (String datasetTag : model.result().dataset().tags()) {
+            if (!model.result().dataset(datasetTag).hasProperty("solution")) continue;
+            String datasetSolution = model.result().dataset(datasetTag).getString("solution");
+            System.out.println("Solution dataset: " + datasetTag + " -> " + datasetSolution);
+            if (solutionTag.equals(datasetSolution)) return datasetTag;
+        }
+        System.out.println("WARNING: no dataset explicitly references " + solutionTag
+                + "; trying fallback " + fallback);
+        return fallback;
     }
 
     private void snapshotInputs(MaterialConfig material, FullCellConfig cell, SimulationConfig simulation,
@@ -113,18 +168,25 @@ public final class FullCellSimulationRunner {
     public static final class RunOptions {
         private final double cRate;
         private final String mode;
-        private final boolean buildOnly, smokeTest;
+        private final boolean buildOnly, exportOnly, smokeTest;
 
         public RunOptions(double cRate, String mode, boolean buildOnly, boolean smokeTest) {
+            this(cRate, mode, buildOnly, false, smokeTest);
+        }
+
+        public RunOptions(double cRate, String mode, boolean buildOnly,
+                          boolean exportOnly, boolean smokeTest) {
             this.cRate = cRate;
             this.mode = mode;
             this.buildOnly = buildOnly;
+            this.exportOnly = exportOnly;
             this.smokeTest = smokeTest;
         }
 
         public double cRate() { return cRate; }
         public String mode() { return mode; }
         public boolean buildOnly() { return buildOnly; }
+        public boolean exportOnly() { return exportOnly; }
         public boolean smokeTest() { return smokeTest; }
     }
 
