@@ -35,5 +35,19 @@ public final class ParticleModelBuilder {
         return new BuiltModel(model, studies, results);
     }
 
-    public record BuiltModel(Model model, StudyBuilder studies, ResultBuilder results) {}
+    public static final class BuiltModel {
+        private final Model model;
+        private final StudyBuilder studies;
+        private final ResultBuilder results;
+
+        public BuiltModel(Model model, StudyBuilder studies, ResultBuilder results) {
+            this.model = model;
+            this.studies = studies;
+            this.results = results;
+        }
+
+        public Model model() { return model; }
+        public StudyBuilder studies() { return studies; }
+        public ResultBuilder results() { return results; }
+    }
 }

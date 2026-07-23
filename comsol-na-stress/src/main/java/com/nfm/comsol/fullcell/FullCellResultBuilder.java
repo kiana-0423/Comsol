@@ -8,6 +8,7 @@ import com.nfm.comsol.util.ComsolTagUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Collections;
 
 /** Shared plots and scalar acceptance metrics for NFM/NFMZC comparisons. */
 public final class FullCellResultBuilder {
@@ -38,12 +39,12 @@ public final class FullCellResultBuilder {
                 && cell.parameterStatus().equalsIgnoreCase("measured")
                 && material.strainMode().equals("interpolation");
         String suffix = quantitative ? "" : " [PROVISIONAL]";
-        var result = model.result();
-        result.dataset().create(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE, "CutLine3D");
-        var cut = result.dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE);
-        cut.set("point1", new String[]{"x_pos_center", "y_pos_center", "z_pos_center"});
-        cut.set("point2", new String[]{"x_pos_center+Rp_pos", "y_pos_center", "z_pos_center"});
-        cut.set("numpoints", 101);
+        model.result().dataset().create(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE, "CutLine3D");
+        model.result().dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE)
+                .set("point1", new String[]{"x_pos_center", "y_pos_center", "z_pos_center"});
+        model.result().dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE)
+                .set("point2", new String[]{"x_pos_center+Rp_pos", "y_pos_center", "z_pos_center"});
+        model.result().dataset(ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE).set("numpoints", 101);
         volumePlot(model, "full_concentration", ComsolTagUtils.POSITIVE_PARTICLE,
                 "xPos", "1", "Positive-particle Na fraction" + suffix,
                 Double.toString(config.concentrationScaleMin()), Double.toString(config.concentrationScaleMax()));
@@ -90,5 +91,7 @@ public final class FullCellResultBuilder {
         model.result("full_solid_potential").set("data", dataset);
     }
 
-    public Map<String, String> metrics() { return Map.copyOf(metrics); }
+    public Map<String, String> metrics() {
+        return Collections.unmodifiableMap(new LinkedHashMap<String, String>(metrics));
+    }
 }

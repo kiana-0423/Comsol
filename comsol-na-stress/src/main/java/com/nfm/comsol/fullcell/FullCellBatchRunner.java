@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** Full-cell matrix, convergence and one-at-a-time uncertainty studies. */
@@ -21,7 +22,7 @@ public final class FullCellBatchRunner {
     public Path runAll(FullCellConfig cell, SimulationConfig simulation,
                        FullCellSimulationRunner.RunOptions base) throws Exception {
         List<FullCellSimulationRunner.RunResult> results = new ArrayList<>();
-        for (String name : List.of("NFM", "NFMZC")) {
+        for (String name : Arrays.asList("NFM", "NFMZC")) {
             MaterialConfig material = ConfigLoader.loadMaterial(simulation.projectRoot(), name);
             for (double rate : simulation.cRates()) {
                 results.add(runner.run(material, cell, simulation,
@@ -40,7 +41,7 @@ public final class FullCellBatchRunner {
     public Path runMeshConvergence(MaterialConfig material, FullCellConfig cell,
                                    SimulationConfig simulation, double cRate, String mode) throws Exception {
         List<FullCellSimulationRunner.RunResult> results = new ArrayList<>();
-        for (String level : List.of("normal", "fine", "extra_fine")) {
+        for (String level : Arrays.asList("normal", "fine", "extra_fine")) {
             results.add(runner.run(material, cell, simulation.withMeshLevel(level),
                     new FullCellSimulationRunner.RunOptions(cRate, mode, false, false),
                     new SensitivityCase("mesh_" + level, 1, 1, 1, 1, 1, 1, 1, 1)));
@@ -93,7 +94,7 @@ public final class FullCellBatchRunner {
                 / cell.negativeExchangeCurrentDensitySensitivity().get(1);
         double negativeKineticsHighScale = cell.negativeExchangeCurrentDensitySensitivity().get(2)
                 / cell.negativeExchangeCurrentDensitySensitivity().get(1);
-        List<SensitivityCase> cases = List.of(
+        List<SensitivityCase> cases = Arrays.asList(
                 SensitivityCase.baseline(),
                 new SensitivityCase("diffusion_low", low,low,1,1,1,1,1,1),
                 new SensitivityCase("diffusion_high", high,high,1,1,1,1,1,1),
@@ -110,7 +111,7 @@ public final class FullCellBatchRunner {
                 new SensitivityCase("negative_kinetics_low", 1,1,1,1,1,1,1,negativeKineticsLowScale),
                 new SensitivityCase("negative_kinetics_high", 1,1,1,1,1,1,1,negativeKineticsHighScale));
         List<FullCellSimulationRunner.RunResult> results = new ArrayList<>();
-        for (var sensitivity : cases) {
+        for (SensitivityCase sensitivity : cases) {
             results.add(runner.run(material, cell, simulation,
                     new FullCellSimulationRunner.RunOptions(cRate, mode, false, false), sensitivity));
         }
@@ -185,7 +186,7 @@ public final class FullCellBatchRunner {
 
     public Path runTimeConvergence(MaterialConfig material, FullCellConfig cell,
                                    SimulationConfig simulation, double cRate, String mode) throws Exception {
-        List<Double> fractions = List.of(0.04, 0.02, 0.01);
+        List<Double> fractions = Arrays.asList(0.04, 0.02, 0.01);
         List<FullCellSimulationRunner.RunResult> results = new ArrayList<>();
         for (double fraction : fractions) {
             String id = Double.toString(fraction).replace('.', 'p');
@@ -199,7 +200,7 @@ public final class FullCellBatchRunner {
             out.write("max_step_fraction,final_average_xNa,maximum_concentration_delta_xNa,maximum_average_stress_Pa,stress_p95_Pa,maximum_stress_Pa,average_xNa_change,concentration_delta_change,average_stress_change,stress_p95_change,maximum_stress_change,converged\n");
             FullCellSimulationRunner.RunResult previous = null;
             for (int i = 0; i < results.size(); i++) {
-                var r = results.get(i);
+                FullCellSimulationRunner.RunResult r = results.get(i);
                 double xChange = previous == null ? Double.NaN : relative(r.finalAverageX(), previous.finalAverageX());
                 double deltaChange = previous == null ? Double.NaN : relative(r.maximumConcentrationDelta(), previous.maximumConcentrationDelta());
                 double avgStressChange = previous == null ? Double.NaN : relative(r.maximumAverageStress(), previous.maximumAverageStress());
@@ -223,7 +224,7 @@ public final class FullCellBatchRunner {
     private void writeSummary(Path file, List<FullCellSimulationRunner.RunResult> results) throws Exception {
         try (BufferedWriter out = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             out.write("case,maximum_von_mises_Pa,maximum_average_stress_Pa,stress_p95_Pa,final_average_xNa,maximum_concentration_delta_xNa,mass_balance_relative_error,element_count,quantitative_ready,mph,metrics\n");
-            for (var r : results) {
+            for (FullCellSimulationRunner.RunResult r : results) {
                 out.write(r.stem() + "," + r.maximumStress() + "," + r.maximumAverageStress() + ","
                         + r.stressP95() + "," + r.finalAverageX() + "," + r.maximumConcentrationDelta() + ","
                         + r.massBalanceError() + "," + r.elementCount() + "," + r.quantitativeReady() + ","

@@ -18,61 +18,67 @@ public final class FullCellDefinitionsBuilder {
         interpolation(model, "sigma_l_fun", cell.electrolyteConductivityCsv(), "S/m");
         interpolation(model, "strain_pos_fun", material.strainCsv(), "1");
 
-        var component = model.component(ComsolTagUtils.FULL_COMPONENT);
-        component.variable().create("positive_variables");
-        var pos = component.variable("positive_variables");
-        pos.selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
-        pos.set("xPos", "cPos/csmax_pos", "Positive-particle sodium fraction");
-        pos.set("xPosBattery", "if(isdefined(cPos),cPos/csmax_pos,x_pos_initial)");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable().create("positive_variables");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables")
+                .selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables")
+                .set("xPos", "cPos/csmax_pos", "Positive-particle sodium fraction");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables")
+                .set("xPosBattery", "if(isdefined(cPos),cPos/csmax_pos,x_pos_initial)");
         String positiveDiffusivity = material.diffusionMode().equals("interpolation")
                 ? "if(runDirection>0,Ds_pos_charge_fun(xPos),Ds_pos_discharge_fun(xPos))"
                 : "if(runDirection>0,Ds_pos_charge,Ds_pos_discharge)";
-        pos.set("DsPos", "(" + positiveDiffusivity
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables").set("DsPos", "(" + positiveDiffusivity
                 + ")*if(runDirection>0,diffusionChargeScale,diffusionDischargeScale)");
-        pos.set("epsilonChemPos", "if(useMeasuredStrain>0.5,strain_pos_fun(xPos),beta_pos*(xPos-x_pos_initial))");
-        pos.set("positiveNaFlux", "-" + ComsolTagUtils.POSITIVE_LOCAL_CURRENT + "/F_const",
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables")
+                .set("epsilonChemPos", "if(useMeasuredStrain>0.5,strain_pos_fun(xPos),beta_pos*(xPos-x_pos_initial))");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("positive_variables")
+                .set("positiveNaFlux", "-" + ComsolTagUtils.POSITIVE_LOCAL_CURRENT + "/F_const",
                 "Local Butler-Volmer current converted to Na molar flux");
 
-        component.variable().create("negative_variables");
-        var neg = component.variable("negative_variables");
-        neg.selection().named(ComsolTagUtils.NEGATIVE_PARTICLES);
-        neg.set("xNeg", "cNeg/csmax_neg", "Hard-carbon sodium fraction");
-        neg.set("xNegBattery", "if(isdefined(cNeg),cNeg/csmax_neg,x_neg_initial)");
-        neg.set("DsNegEffective", "Ds_neg_fun(xNeg)");
-        neg.set("negativeNaFlux", "-" + ComsolTagUtils.NEGATIVE_LOCAL_CURRENT + "/F_const",
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable().create("negative_variables");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_variables")
+                .selection().named(ComsolTagUtils.NEGATIVE_PARTICLES);
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_variables")
+                .set("xNeg", "cNeg/csmax_neg", "Hard-carbon sodium fraction");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_variables")
+                .set("xNegBattery", "if(isdefined(cNeg),cNeg/csmax_neg,x_neg_initial)");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_variables")
+                .set("DsNegEffective", "Ds_neg_fun(xNeg)");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("negative_variables")
+                .set("negativeNaFlux", "-" + ComsolTagUtils.NEGATIVE_LOCAL_CURRENT + "/F_const",
                 "Local Butler-Volmer current converted to Na molar flux");
 
-        component.cpl().create("ave_pos", "Average");
-        component.cpl("ave_pos").selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
-        component.cpl().create("max_pos", "Maximum");
-        component.cpl("max_pos").selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
-        component.cpl().create("ave_pos_surface", "Average");
-        component.cpl("ave_pos_surface").selection().named(ComsolTagUtils.POSITIVE_SURFACE);
-        component.cpl().create("ave_neg", "Average");
-        component.cpl("ave_neg").selection().named(ComsolTagUtils.NEGATIVE_PARTICLES);
-        component.cpl().create("ave_electrolyte", "Average");
-        component.cpl("ave_electrolyte").selection().named(ComsolTagUtils.ELECTROLYTE_DOMAINS);
-        component.cpl().create("int_an_electrolyte", "Integration");
-        component.cpl("int_an_electrolyte").selection().named(ComsolTagUtils.ANODE_MATRIX);
-        component.cpl().create("int_sep_electrolyte", "Integration");
-        component.cpl("int_sep_electrolyte").selection().named(ComsolTagUtils.SEPARATOR_DOMAIN);
-        component.cpl().create("int_ca_electrolyte", "Integration");
-        component.cpl("int_ca_electrolyte").selection().named(ComsolTagUtils.CATHODE_MATRIX);
-        component.cpl().create("ave_positive_collector", "Average");
-        component.cpl("ave_positive_collector").selection().named(ComsolTagUtils.POSITIVE_COLLECTOR);
-        component.cpl().create("ave_negative_collector", "Average");
-        component.cpl("ave_negative_collector").selection().named(ComsolTagUtils.NEGATIVE_COLLECTOR);
+        coupling(model, "ave_pos", "Average", ComsolTagUtils.POSITIVE_PARTICLE);
+        coupling(model, "max_pos", "Maximum", ComsolTagUtils.POSITIVE_PARTICLE);
+        coupling(model, "ave_pos_surface", "Average", ComsolTagUtils.POSITIVE_SURFACE);
+        coupling(model, "ave_neg", "Average", ComsolTagUtils.NEGATIVE_PARTICLES);
+        coupling(model, "ave_electrolyte", "Average", ComsolTagUtils.ELECTROLYTE_DOMAINS);
+        coupling(model, "int_an_electrolyte", "Integration", ComsolTagUtils.ANODE_MATRIX);
+        coupling(model, "int_sep_electrolyte", "Integration", ComsolTagUtils.SEPARATOR_DOMAIN);
+        coupling(model, "int_ca_electrolyte", "Integration", ComsolTagUtils.CATHODE_MATRIX);
+        coupling(model, "ave_positive_collector", "Average", ComsolTagUtils.POSITIVE_COLLECTOR);
+        coupling(model, "ave_negative_collector", "Average", ComsolTagUtils.NEGATIVE_COLLECTOR);
 
-        component.variable().create("cell_metrics");
-        var metrics = component.variable("cell_metrics");
-        metrics.set("cellVoltage", "ave_positive_collector(liion.phis)-ave_negative_collector(liion.phis)", "Terminal voltage");
-        metrics.set("cellCapacity", "abs(I_app*t)/3600/1[mAh]", "Transferred cell capacity");
-        metrics.set("positiveInventory", "ave_pos(cPos)*Vp_pos", "Positive-particle Na inventory proxy");
-        metrics.set("negativeInventory", "ave_neg(cNeg)*(2*4*pi*Rp_neg_large^3/3+2*4*pi*Rp_neg_small^3/3)");
-        metrics.set("electrolyteInventoryChange",
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable().create("cell_metrics");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
+                .set("cellVoltage", "ave_positive_collector(liion.phis)-ave_negative_collector(liion.phis)", "Terminal voltage");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
+                .set("cellCapacity", "abs(I_app*t)/3600/1[mAh]", "Transferred cell capacity");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
+                .set("positiveInventory", "ave_pos(cPos)*Vp_pos", "Positive-particle Na inventory proxy");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
+                .set("negativeInventory", "ave_neg(cNeg)*(2*4*pi*Rp_neg_large^3/3+2*4*pi*Rp_neg_small^3/3)");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics").set("electrolyteInventoryChange",
                 "eps_an*int_an_electrolyte(liion.cl-cl0)+eps_sep*int_sep_electrolyte(liion.cl-cl0)+eps_ca*int_ca_electrolyte(liion.cl-cl0)",
                 "Electrolyte Na inventory change relative to the uniform initial salt concentration");
-        metrics.set("totalNaInventory", "positiveInventory+negativeInventory+electrolyteInventoryChange");
+        model.component(ComsolTagUtils.FULL_COMPONENT).variable("cell_metrics")
+                .set("totalNaInventory", "positiveInventory+negativeInventory+electrolyteInventoryChange");
+    }
+
+    private void coupling(Model model, String tag, String type, String selection) {
+        model.component(ComsolTagUtils.FULL_COMPONENT).cpl().create(tag, type);
+        model.component(ComsolTagUtils.FULL_COMPONENT).cpl(tag).selection().named(selection);
     }
 
     private void interpolation(Model model, String tag, java.nio.file.Path file, String unit) {

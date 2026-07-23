@@ -31,22 +31,20 @@ public final class StudyBuilder {
     }
 
     public void configureDischargeContinuation(Model model) {
-        var time = model.study(ComsolTagUtils.STUDY_DISCHARGE).feature("time");
-        time.set("useinitsol", true);
-        time.set("initmethod", "sol");
-        time.set("initstudy", ComsolTagUtils.STUDY_CHARGE);
-        time.set("solnum", "last");
+        model.study(ComsolTagUtils.STUDY_DISCHARGE).feature("time").set("useinitsol", true);
+        model.study(ComsolTagUtils.STUDY_DISCHARGE).feature("time").set("initmethod", "sol");
+        model.study(ComsolTagUtils.STUDY_DISCHARGE).feature("time").set("initstudy", ComsolTagUtils.STUDY_CHARGE);
+        model.study(ComsolTagUtils.STUDY_DISCHARGE).feature("time").set("solnum", "last");
     }
 
     public void prepareAndRun(Model model, String studyTag, String solutionTag,
                               String duration, SimulationConfig config) {
         model.study(studyTag).createAutoSequences("sol");
-        var timeSolver = model.sol(solutionTag).feature("t1");
-        timeSolver.set("timemethod", "bdf");
-        timeSolver.set("rtol", Double.toString(config.relativeTolerance()));
-        timeSolver.set("maxstepconstraintbdf", "expr");
-        timeSolver.set("maxstepexpressionbdf", config.maxStepFraction() + "*" + duration);
-        timeSolver.set("tstepsbdf", "intermediate");
+        model.sol(solutionTag).feature("t1").set("timemethod", "bdf");
+        model.sol(solutionTag).feature("t1").set("rtol", Double.toString(config.relativeTolerance()));
+        model.sol(solutionTag).feature("t1").set("maxstepconstraintbdf", "expr");
+        model.sol(solutionTag).feature("t1").set("maxstepexpressionbdf", config.maxStepFraction() + "*" + duration);
+        model.sol(solutionTag).feature("t1").set("tstepsbdf", "intermediate");
         model.sol(solutionTag).runAll();
     }
 }

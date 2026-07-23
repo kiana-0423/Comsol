@@ -24,13 +24,12 @@ public final class MetricsExporter {
 
         model.result().table().create("metrics_table", "Table");
         model.result().numerical().create("metrics_eval", "EvalGlobal");
-        var eval = model.result().numerical("metrics_eval");
-        eval.set("data", solutionData);
-        eval.set("expr", expr);
-        eval.set("descr", names.toArray(String[]::new));
-        eval.set("looplevelinput", "all");
-        eval.set("table", "metrics_table");
-        eval.setResult();
+        model.result().numerical("metrics_eval").set("data", solutionData);
+        model.result().numerical("metrics_eval").set("expr", expr);
+        model.result().numerical("metrics_eval").set("descr", names.toArray(new String[0]));
+        model.result().numerical("metrics_eval").set("looplevelinput", "all");
+        model.result().numerical("metrics_eval").set("table", "metrics_table");
+        model.result().numerical("metrics_eval").setResult();
 
         Path timeSeries = csvDir.resolve(stem + "_time_series.csv");
         model.result().export().create("time_series_csv", "Table");
@@ -64,19 +63,34 @@ public final class MetricsExporter {
 
     private double[] evaluateSeries(Model model, String tag, String data, String expression) {
         model.result().numerical().create(tag, "EvalGlobal");
-        var numerical = model.result().numerical(tag);
-        numerical.set("data", data);
-        numerical.set("expr", new String[]{expression});
-        numerical.set("looplevelinput", "all");
-        double[][] matrix = numerical.getReal();
+        model.result().numerical(tag).set("data", data);
+        model.result().numerical(tag).set("expr", new String[]{expression});
+        model.result().numerical(tag).set("looplevelinput", "all");
+        double[][] matrix = model.result().numerical(tag).getReal();
         List<Double> flattened = new ArrayList<>();
         for (double[] row : matrix) for (double value : row) flattened.add(value);
         return flattened.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
-    public record ExportedMetrics(Path metricsFile, Path timeSeriesFile,
-                                  List<String> names, List<Double> finalValues,
-                                  double initialMaximumStress) {
+    public static final class ExportedMetrics {
+        private final Path metricsFile, timeSeriesFile;
+        private final List<String> names;
+        private final List<Double> finalValues;
+        private final double initialMaximumStress;
+
+        public ExportedMetrics(Path metricsFile, Path timeSeriesFile,
+                               List<String> names, List<Double> finalValues,
+                               double initialMaximumStress) {
+            this.metricsFile = metricsFile;
+            this.timeSeriesFile = timeSeriesFile;
+            this.names = names;
+            this.finalValues = finalValues;
+            this.initialMaximumStress = initialMaximumStress;
+        }
+
+        public Path metricsFile() { return metricsFile; }
+        public Path timeSeriesFile() { return timeSeriesFile; }
+        public double initialMaximumStress() { return initialMaximumStress; }
         public double value(String name) { return finalValues.get(names.indexOf(name)); }
     }
 }

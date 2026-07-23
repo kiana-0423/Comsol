@@ -16,34 +16,36 @@ public final class DefinitionsBuilder {
                 ? material.strainCsv() : data.resolve("strain_nfmzc_template.csv"));
 
         model.component(ComsolTagUtils.COMPONENT).variable().create("coupling_variables");
-        var vars = model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables");
-        vars.selection().named(ComsolTagUtils.PARTICLE_DOMAIN);
-        vars.set("xNa", "cNa/csmax", "Normalized Na content");
-        vars.set("rNorm", "min(1,sqrt(r^2+z^2)/Rp)", "Normalized radius");
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").selection().named(ComsolTagUtils.PARTICLE_DOMAIN);
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("xNa", "cNa/csmax", "Normalized Na content");
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("rNorm", "min(1,sqrt(r^2+z^2)/Rp)", "Normalized radius");
 
         String dsByX = "if(runSign<0,Ds_charge(xNa),Ds_discharge(xNa))";
         String dsBase = material.diffusionMode().equals("interpolation") ? dsByX : "DsConst";
         String ds = material.gradientEnabled()
                 ? "DsCore+(DsSurface-DsCore)*rNorm^gradExponent" : dsBase;
-        vars.set("DsEffective", ds, "Active diffusivity expression");
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("DsEffective", ds, "Active diffusivity expression");
 
         String beta = material.gradientEnabled()
                 ? "betaCore+(betaSurface-betaCore)*rNorm^gradExponent" : "betaLinear";
-        vars.set("betaEffective", beta, "Active isotropic expansion coefficient");
-        vars.set("deltaX", "xNa-xInitial", "Na fraction relative to stress-free initial state");
-        vars.set("phaseCoordinate",
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("betaEffective", beta, "Active isotropic expansion coefficient");
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("deltaX", "xNa-xInitial", "Na fraction relative to stress-free initial state");
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("phaseCoordinate",
                 "min(1,max(0,(phaseXHigh-xNa)/max(phaseXHigh-phaseXLow,phaseSmooth)))",
                 "0 above phase x-high and 1 below phase x-low during decreasing-x charge");
-        vars.set("phaseProgress", "phaseCoordinate^2*(3-2*phaseCoordinate)",
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("phaseProgress", "phaseCoordinate^2*(3-2*phaseCoordinate)",
                 "C1-smooth phase progress across the configured x window");
 
-        String strain = switch (material.strainMode()) {
-            case "interpolation" -> (material.name().equals("NFM") ? "strain_NFM(xNa)" : "strain_NFMZC(xNa)");
-            case "phase_transition" -> "betaEffective*deltaX+phaseExtraStrain*phaseProgress";
-            default -> "betaEffective*(cNa-cRef)/csmax";
-        };
-        vars.set("epsilonChem", strain, "Isotropic chemical eigenstrain; not thermal strain");
-        vars.set("signedNaFlux", "runSign*NNa", "Negative on charge, positive on discharge");
+        String strain;
+        if ("interpolation".equals(material.strainMode())) {
+            strain = material.name().equals("NFM") ? "strain_NFM(xNa)" : "strain_NFMZC(xNa)";
+        } else if ("phase_transition".equals(material.strainMode())) {
+            strain = "betaEffective*deltaX+phaseExtraStrain*phaseProgress";
+        } else {
+            strain = "betaEffective*(cNa-cRef)/csmax";
+        }
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("epsilonChem", strain, "Isotropic chemical eigenstrain; not thermal strain");
+        model.component(ComsolTagUtils.COMPONENT).variable("coupling_variables").set("signedNaFlux", "runSign*NNa", "Negative on charge, positive on discharge");
 
         model.component(ComsolTagUtils.COMPONENT).cpl().create("ave_particle", "Average");
         model.component(ComsolTagUtils.COMPONENT).cpl("ave_particle").selection().named(ComsolTagUtils.PARTICLE_DOMAIN);

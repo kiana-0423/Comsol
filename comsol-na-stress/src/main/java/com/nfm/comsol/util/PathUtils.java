@@ -3,6 +3,7 @@ package com.nfm.comsol.util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -13,7 +14,7 @@ public final class PathUtils {
 
     public static Path detectProjectRoot() {
         String configured = System.getenv("PROJECT_HOME");
-        Path root = configured == null || configured.isBlank() ? Path.of("") : Path.of(configured);
+        Path root = configured == null || configured.trim().isEmpty() ? Paths.get("") : Paths.get(configured);
         return root.toAbsolutePath().normalize();
     }
 

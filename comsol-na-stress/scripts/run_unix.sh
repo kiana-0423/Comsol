@@ -25,7 +25,7 @@ comsol_cmd=$(find_comsol) || {
 }
 
 classes="$project_home/target/classes"
-main_class="$classes/com/nfm/comsol/Main.class"
+main_class="$classes/NfmComsolEntry.class"
 [ -f "$main_class" ] || {
   echo 'ERROR: compiled classes not found. Run scripts/compile_unix.sh first.' >&2
   exit 3
@@ -38,6 +38,7 @@ for arg in "$@"; do
 done
 
 cd "$project_home"
+echo "COMSOL batch entry: $main_class"
 NFM_COMSOL_ARGS=${encoded_args# } "$comsol_cmd" batch \
   -classpathadd "$classes" \
   -inputfile "$main_class"

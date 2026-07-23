@@ -7,6 +7,7 @@ import com.nfm.comsol.config.SimulationConfig;
 
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Arrays;
 
 public final class ValidationUtils {
     private ValidationUtils() {}
@@ -36,16 +37,16 @@ public final class ValidationUtils {
         require(Math.abs(c.exchangeCurrentDensitySensitivity().get(1)
                         - leading(c.exchangeCurrentDensity())) < 1e-12,
                 "middle exchange-current sensitivity value must equal exchange.current.density in A/m2");
-        require(List.of("constant", "interpolation").contains(c.diffusionMode()), "invalid diffusion.mode");
-        require(List.of("linear", "interpolation", "phase_transition").contains(c.strainMode()), "invalid strain.mode");
+        require(Arrays.asList("constant", "interpolation").contains(c.diffusionMode()), "invalid diffusion.mode");
+        require(Arrays.asList("linear", "interpolation", "phase_transition").contains(c.strainMode()), "invalid strain.mode");
         require(c.phaseSmoothingWidth() > 0, "phase.smoothing.width must be positive");
         require(c.phaseHigh() > c.phaseLow(), "phase.x.high must exceed phase.x.low for decreasing-x charge");
         require(c.gradientExponent() > 0, "gradient.exponent must be positive");
-        require(List.of("provisional", "literature", "measured").contains(c.parameterStatus().toLowerCase()),
+        require(Arrays.asList("provisional", "literature", "measured").contains(c.parameterStatus().toLowerCase()),
                 "parameter.status must be provisional, literature, or measured");
         require(c.parameterUncertainty() >= 0 && c.parameterUncertainty() <= 1,
                 "parameter.uncertainty must be in [0,1]");
-        require(!c.parameterSource().isBlank(), "parameter.source must not be blank");
+        require(!c.parameterSource().trim().isEmpty(), "parameter.source must not be blank");
     }
 
     private static void validatePositiveTriplet(List<Double> values, String name) {
@@ -71,10 +72,10 @@ public final class ValidationUtils {
         require(c.negativeBeta() >= 0, "negative.chemical.expansion.beta must be nonnegative");
         validatePositiveTriplet(c.negativeExchangeCurrentDensitySensitivity(),
                 "negative.exchange.current.density.sensitivity.a_m2");
-        for (double p : List.of(c.anodePorosity(), c.cathodePorosity(), c.separatorPorosity())) {
+        for (double p : Arrays.asList(c.anodePorosity(), c.cathodePorosity(), c.separatorPorosity())) {
             require(p > 0 && p < 1, "porosities must be in (0,1)");
         }
-        for (double t : List.of(c.anodeTortuosity(), c.cathodeTortuosity(), c.separatorTortuosity())) {
+        for (double t : Arrays.asList(c.anodeTortuosity(), c.cathodeTortuosity(), c.separatorTortuosity())) {
             require(t >= 1, "tortuosities must be >=1");
         }
         require(c.chargeCutoffVoltage() > c.dischargeCutoffVoltage(), "charge cutoff must exceed discharge cutoff");
@@ -89,14 +90,14 @@ public final class ValidationUtils {
                         && c.convergenceAverageStressLimit() > 0
                         && c.convergenceStressP95Limit() > 0,
                 "convergence limits must be positive");
-        require(List.of("provisional", "literature", "measured").contains(c.parameterStatus().toLowerCase()),
+        require(Arrays.asList("provisional", "literature", "measured").contains(c.parameterStatus().toLowerCase()),
                 "full-cell parameter.status must be provisional, literature, or measured");
     }
 
     public static void validateSimulationConfig(SimulationConfig c) {
         require(c.comsolVersion().equals("6.4"), "This project is currently qualified for COMSOL 6.4");
         require(!c.cRates().isEmpty() && c.cRates().stream().allMatch(v -> v > 0), "all C-rates must be positive");
-        require(List.of("coarse", "normal", "fine", "extra_fine").contains(c.meshLevel()), "invalid mesh.level");
+        require(Arrays.asList("coarse", "normal", "fine", "extra_fine").contains(c.meshLevel()), "invalid mesh.level");
         require(c.meshGrowthRate() > 1, "mesh.growth.rate must be > 1");
         require(c.relativeTolerance() > 0, "solver.relative.tolerance must be positive");
         require(c.concentrationScaleMin() < c.concentrationScaleMax(), "invalid concentration color scale");

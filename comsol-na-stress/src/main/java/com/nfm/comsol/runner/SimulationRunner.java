@@ -8,6 +8,7 @@ import com.nfm.comsol.export.CsvExporter;
 import com.nfm.comsol.export.FigureExporter;
 import com.nfm.comsol.export.MetricsExporter;
 import com.nfm.comsol.model.ParticleModelBuilder;
+import com.nfm.comsol.model.ResultBuilder;
 import com.nfm.comsol.util.ComsolTagUtils;
 import com.nfm.comsol.util.PathUtils;
 import com.nfm.comsol.util.ValidationUtils;
@@ -20,6 +21,7 @@ import java.time.Instant;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.Handler;
 import java.util.logging.SimpleFormatter;
 
 public final class SimulationRunner {
@@ -46,7 +48,8 @@ public final class SimulationRunner {
                 return export(model, null, simulation, stem, logger, mph);
             }
 
-            var built = builder.build(material, simulation, options.cRate(), options.mode(), options.smokeTest());
+            ParticleModelBuilder.BuiltModel built =
+                    builder.build(material, simulation, options.cRate(), options.mode(), options.smokeTest());
             model = built.model();
             Path mph = simulation.outputRoot().resolve("mph").resolve(stem + ".mph");
             if (options.buildOnly()) {
@@ -67,7 +70,7 @@ public final class SimulationRunner {
             throw ex;
         } finally {
             if (model != null) ModelUtil.remove(model.tag());
-            for (var handler : logger.getHandlers()) handler.close();
+            for (Handler handler : logger.getHandlers()) handler.close();
         }
     }
 
@@ -91,9 +94,10 @@ public final class SimulationRunner {
 
     private RunResult export(Model model, ParticleModelBuilder.BuiltModel built, SimulationConfig simulation,
                              String stem, Logger logger, Path mph) throws IOException {
-        var resultBuilder = built != null ? built.results() : new com.nfm.comsol.model.ResultBuilder();
+        ResultBuilder resultBuilder = built != null ? built.results() : new ResultBuilder();
         Path radial = csvExporter.exportRadialProfiles(model, simulation.outputRoot().resolve("csv"), stem);
-        var metrics = metricsExporter.export(model, resultBuilder, simulation.outputRoot().resolve("csv"), stem);
+        MetricsExporter.ExportedMetrics metrics =
+                metricsExporter.export(model, resultBuilder, simulation.outputRoot().resolve("csv"), stem);
         figureExporter.export(model, simulation, simulation.outputRoot().resolve("figures"), stem);
         double avgX = metrics.value("average_xNa");
         double maxStress = metrics.value("maximum_von_mises_Pa");
@@ -161,13 +165,60 @@ public final class SimulationRunner {
         if (m.strainMode().equals("interpolation")) Files.copy(m.strainCsv(), dir.resolve(m.strainCsv().getFileName()), StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public record RunOptions(double cRate, String mode, boolean buildOnly, boolean exportOnly, boolean smokeTest) {}
-    public record RunResult(String stem, Path mph, Path metrics, Path radialProfiles, Path timeSeries,
-                            double averageXNa, double maximumStress, int elementCount,
-                            double surfaceCenterDelta) {
+    public static final class RunOptions {
+        private final double cRate;
+        private final String mode;
+        private final boolean buildOnly, exportOnly, smokeTest;
+
+        public RunOptions(double cRate, String mode, boolean buildOnly,
+                          boolean exportOnly, boolean smokeTest) {
+            this.cRate = cRate;
+            this.mode = mode;
+            this.buildOnly = buildOnly;
+            this.exportOnly = exportOnly;
+            this.smokeTest = smokeTest;
+        }
+
+        public double cRate() { return cRate; }
+        public String mode() { return mode; }
+        public boolean buildOnly() { return buildOnly; }
+        public boolean exportOnly() { return exportOnly; }
+        public boolean smokeTest() { return smokeTest; }
+    }
+
+    public static final class RunResult {
+        private final String stem;
+        private final Path mph, metrics, radialProfiles, timeSeries;
+        private final double averageXNa, maximumStress, surfaceCenterDelta;
+        private final int elementCount;
+
+        public RunResult(String stem, Path mph, Path metrics, Path radialProfiles, Path timeSeries,
+                         double averageXNa, double maximumStress, int elementCount,
+                         double surfaceCenterDelta) {
+            this.stem = stem;
+            this.mph = mph;
+            this.metrics = metrics;
+            this.radialProfiles = radialProfiles;
+            this.timeSeries = timeSeries;
+            this.averageXNa = averageXNa;
+            this.maximumStress = maximumStress;
+            this.elementCount = elementCount;
+            this.surfaceCenterDelta = surfaceCenterDelta;
+        }
+
         public RunResult(String stem, Path mph, Path metrics, Path radialProfiles, Path timeSeries,
                          double averageXNa, double maximumStress, int elementCount) {
             this(stem, mph, metrics, radialProfiles, timeSeries, averageXNa, maximumStress, elementCount, Double.NaN);
         }
+
+        public String stem() { return stem; }
+        public Path mph() { return mph; }
+        public Path metrics() { return metrics; }
+        public Path radialProfiles() { return radialProfiles; }
+        public Path timeSeries() { return timeSeries; }
+        public double averageXNa() { return averageXNa; }
+        public double maximumStress() { return maximumStress; }
+        public int elementCount() { return elementCount; }
+        public double surfaceCenterDelta() { return surfaceCenterDelta; }
     }
 }

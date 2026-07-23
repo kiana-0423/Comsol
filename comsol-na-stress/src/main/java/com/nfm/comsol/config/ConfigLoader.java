@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public final class ConfigLoader {
     private ConfigLoader() {}
@@ -17,7 +19,7 @@ public final class ConfigLoader {
     public static SimulationConfig loadSimulation(Path projectRoot, Path file) throws IOException {
         Path resolved = resolve(projectRoot, file);
         Properties p = load(resolved);
-        Path output = resolve(projectRoot, Path.of(required(p, "output.root")));
+        Path output = resolve(projectRoot, Paths.get(required(p, "output.root")));
         SimulationConfig cfg = new SimulationConfig(
                 required(p, "comsol.version"), doubles(p, "c.rates"), required(p, "mode"),
                 required(p, "discharge.initialization"), required(p, "mesh.level"),
@@ -54,15 +56,15 @@ public final class ConfigLoader {
                 doubles(p, "chemical.expansion.beta.sensitivity.values"),
                 required(p, "parameter.status"),
                 required(p, "parameter.source"), number(p, "parameter.uncertainty"),
-                resolve(projectRoot, Path.of(required(p, "parameter.metadata.csv"))),
-                resolve(projectRoot, Path.of(required(p, "ocv.csv"))),
-                resolve(projectRoot, Path.of(required(p, "experimental.curve.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "parameter.metadata.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "ocv.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "experimental.curve.csv"))),
                 required(p, "exchange.current.density"),
                 doubles(p, "exchange.current.density.sensitivity.a_m2"),
                 required(p, "diffusion.mode"),
-                resolve(projectRoot, Path.of(required(p, "diffusion.charge.csv"))),
-                resolve(projectRoot, Path.of(required(p, "diffusion.discharge.csv"))),
-                required(p, "strain.mode"), resolve(projectRoot, Path.of(required(p, "strain.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "diffusion.charge.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "diffusion.discharge.csv"))),
+                required(p, "strain.mode"), resolve(projectRoot, Paths.get(required(p, "strain.csv"))),
                 flag(p, "phase.transition.enabled"), number(p, "phase.x.high"),
                 number(p, "phase.x.low"), number(p, "phase.extra.strain"),
                 number(p, "phase.smoothing.width"), flag(p, "gradient.enabled"),
@@ -111,10 +113,10 @@ public final class ConfigLoader {
                 number(p, "porosity.cathode"), number(p, "porosity.separator"),
                 number(p, "tortuosity.anode"), number(p, "tortuosity.cathode"),
                 number(p, "tortuosity.separator"),
-                resolve(projectRoot, Path.of(required(p, "negative.ocv.csv"))),
-                resolve(projectRoot, Path.of(required(p, "negative.kinetics.csv"))),
-                resolve(projectRoot, Path.of(required(p, "negative.diffusivity.csv"))),
-                resolve(projectRoot, Path.of(required(p, "electrolyte.conductivity.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "negative.ocv.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "negative.kinetics.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "negative.diffusivity.csv"))),
+                resolve(projectRoot, Paths.get(required(p, "electrolyte.conductivity.csv"))),
                 doubles(p, "snapshots.charge.voltages"), doubles(p, "snapshots.discharge.voltages"),
                 doubles(p, "snapshots.soc.fractions"),
                 number(p, "cutoff.charge.voltage"), number(p, "cutoff.discharge.voltage"),
@@ -128,9 +130,9 @@ public final class ConfigLoader {
                 number(p, "convergence.average.stress.limit"),
                 number(p, "convergence.stress.p95.limit"), required(p, "parameter.status"),
                 required(p, "parameter.source"), number(p, "parameter.uncertainty"),
-                resolve(projectRoot, Path.of(required(p, "parameter.metadata.csv"))), resolved, p);
+                resolve(projectRoot, Paths.get(required(p, "parameter.metadata.csv"))), resolved, p);
         ValidationUtils.validateFullCellConfig(cfg);
-        for (Path data : List.of(cfg.negativeOcvCsv(), cfg.negativeKineticsCsv(),
+        for (Path data : Arrays.asList(cfg.negativeOcvCsv(), cfg.negativeKineticsCsv(),
                 cfg.negativeDiffusivityCsv(), cfg.electrolyteConductivityCsv(), cfg.parameterMetadataCsv())) {
             if (!Files.isRegularFile(data)) throw new IOException("Full-cell data file not found: " + data);
         }
@@ -146,11 +148,11 @@ public final class ConfigLoader {
         }
         boolean allMeasured = true;
         for (int i = 1; i < lines.size(); i++) {
-            if (lines.get(i).isBlank()) continue;
+            if (lines.get(i).trim().isEmpty()) continue;
             String[] columns = lines.get(i).split(",", -1);
             if (columns.length != 6) throw new IOException("Parameter metadata row must have six columns: " + file + ":" + (i+1));
             String status = columns[3].trim().toLowerCase(Locale.ROOT);
-            if (!List.of("provisional", "literature", "measured").contains(status)) {
+            if (!Arrays.asList("provisional", "literature", "measured").contains(status)) {
                 throw new IOException("Invalid parameter metadata status: " + file + ":" + (i+1));
             }
             double uncertainty = Double.parseDouble(columns[5].trim());
@@ -177,13 +179,14 @@ public final class ConfigLoader {
 
     private static String required(Properties p, String key) {
         String value = p.getProperty(key);
-        if (value == null || value.isBlank()) throw new IllegalArgumentException("Missing property: " + key);
+        if (value == null || value.trim().isEmpty()) throw new IllegalArgumentException("Missing property: " + key);
         return value.trim();
     }
 
     private static double number(Properties p, String key) { return Double.parseDouble(required(p, key)); }
     private static boolean flag(Properties p, String key) { return Boolean.parseBoolean(required(p, key)); }
     private static List<Double> doubles(Properties p, String key) {
-        return Arrays.stream(required(p, key).split(",")).map(String::trim).map(Double::parseDouble).toList();
+        return Arrays.stream(required(p, key).split(","))
+                .map(String::trim).map(Double::parseDouble).collect(Collectors.toList());
     }
 }

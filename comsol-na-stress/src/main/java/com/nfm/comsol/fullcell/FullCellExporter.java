@@ -34,13 +34,12 @@ public final class FullCellExporter {
         String evalTag = "eval_" + id;
         model.result().table().create(tableTag, "Table");
         model.result().numerical().create(evalTag, "EvalGlobal");
-        var eval = model.result().numerical(evalTag);
-        eval.set("data", dataset);
-        eval.set("expr", expressions);
-        eval.set("descr", names.toArray(String[]::new));
-        eval.set("looplevelinput", "all");
-        eval.set("table", tableTag);
-        eval.setResult();
+        model.result().numerical(evalTag).set("data", dataset);
+        model.result().numerical(evalTag).set("expr", expressions);
+        model.result().numerical(evalTag).set("descr", names.toArray(new String[0]));
+        model.result().numerical(evalTag).set("looplevelinput", "all");
+        model.result().numerical(evalTag).set("table", tableTag);
+        model.result().numerical(evalTag).setResult();
 
         Path timeSeries = csvDir.resolve(stem + "_time_series.csv");
         String timeExportTag = "ts_" + id;
@@ -62,15 +61,14 @@ public final class FullCellExporter {
         Path radial = csvDir.resolve(stem + "_positive_radial_profiles.csv");
         String radialTag = "radial_" + id;
         model.result().export().create(radialTag, "Data");
-        var radialExport = model.result().export(radialTag);
-        radialExport.set("data", ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE);
-        radialExport.set("expr", new String[]{"sqrt((x-x_pos_center)^2+(y-y_pos_center)^2+(z-z_pos_center)^2)/Rp_pos",
+        model.result().export(radialTag).set("data", ComsolTagUtils.FULL_DATASET_POSITIVE_CUTLINE);
+        model.result().export(radialTag).set("expr", new String[]{"sqrt((x-x_pos_center)^2+(y-y_pos_center)^2+(z-z_pos_center)^2)/Rp_pos",
                 "xPos", "cPos", "solid_full.mises", "epsilonChemPos"});
-        radialExport.set("unit", new String[]{"1", "1", "mol/m^3", "MPa", "1"});
-        radialExport.set("looplevelinput", "all");
-        radialExport.set("filename", PathUtils.comsolPath(radial));
-        radialExport.set("fullprec", true);
-        radialExport.run();
+        model.result().export(radialTag).set("unit", new String[]{"1", "1", "mol/m^3", "MPa", "1"});
+        model.result().export(radialTag).set("looplevelinput", "all");
+        model.result().export(radialTag).set("filename", PathUtils.comsolPath(radial));
+        model.result().export(radialTag).set("fullprec", true);
+        model.result().export(radialTag).run();
 
         double[] voltages = series(model, "voltage_" + id, dataset, "cellVoltage/1[V]");
         if (voltages.length == 0) throw new IOException("No voltage solution levels available for " + stem);
@@ -168,7 +166,7 @@ public final class FullCellExporter {
         }
         List<CurvePoint> experiment = new ArrayList<>();
         for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
-            String stripped = line.strip();
+            String stripped = line.trim();
             if (stripped.isEmpty() || stripped.startsWith("#")) continue;
             String[] columns = stripped.split("[,;\\t]");
             if (columns.length < 2) continue;
@@ -217,19 +215,18 @@ public final class FullCellExporter {
                                                int solutionLevels, Path file) throws IOException {
         String tag = "stress_samples_" + id;
         model.result().export().create(tag, "Data");
-        var data = model.result().export(tag);
-        data.set("data", dataset);
-        data.selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
-        data.set("expr", new String[]{"solid_full.mises"});
-        data.set("unit", new String[]{"Pa"});
-        data.set("looplevelinput", "manual");
-        data.set("looplevel", new int[]{solutionLevels});
-        data.set("filename", PathUtils.comsolPath(file));
-        data.run();
+        model.result().export(tag).set("data", dataset);
+        model.result().export(tag).selection().named(ComsolTagUtils.POSITIVE_PARTICLE);
+        model.result().export(tag).set("expr", new String[]{"solid_full.mises"});
+        model.result().export(tag).set("unit", new String[]{"Pa"});
+        model.result().export(tag).set("looplevelinput", "manual");
+        model.result().export(tag).set("looplevel", new int[]{solutionLevels});
+        model.result().export(tag).set("filename", PathUtils.comsolPath(file));
+        model.result().export(tag).run();
 
         List<Double> samples = new ArrayList<>();
         for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
-            String stripped = line.strip();
+            String stripped = line.trim();
             if (stripped.isEmpty() || stripped.startsWith("%")) continue;
             String[] columns = stripped.split("[,;\\s]+");
             try {
@@ -293,13 +290,12 @@ public final class FullCellExporter {
         model.result(plot).set("looplevelinput", "manual");
         model.result(plot).set("looplevel", new int[]{level});
         model.result().export().create(tag, "Image3D");
-        var image = model.result().export(tag);
-        image.set("plotgroup", plot);
-        image.set("pngfilename", PathUtils.comsolPath(file));
-        image.set("width", 1400);
-        image.set("height", 1000);
-        image.set("resolution", 150);
-        image.run();
+        model.result().export(tag).set("plotgroup", plot);
+        model.result().export(tag).set("pngfilename", PathUtils.comsolPath(file));
+        model.result().export(tag).set("width", 1400);
+        model.result().export(tag).set("height", 1000);
+        model.result().export(tag).set("resolution", 150);
+        model.result().export(tag).run();
     }
 
     private int nearest(double[] values, double target) {
@@ -321,11 +317,10 @@ public final class FullCellExporter {
 
     private double[] series(Model model, String tag, String dataset, String expression) {
         model.result().numerical().create(tag, "EvalGlobal");
-        var numerical = model.result().numerical(tag);
-        numerical.set("data", dataset);
-        numerical.set("expr", new String[]{expression});
-        numerical.set("looplevelinput", "all");
-        double[][] matrix = numerical.getReal();
+        model.result().numerical(tag).set("data", dataset);
+        model.result().numerical(tag).set("expr", new String[]{expression});
+        model.result().numerical(tag).set("looplevelinput", "all");
+        double[][] matrix = model.result().numerical(tag).getReal();
         List<Double> values = new ArrayList<>();
         for (double[] row : matrix) for (double value : row) values.add(value);
         return values.stream().mapToDouble(Double::doubleValue).toArray();
@@ -342,14 +337,68 @@ public final class FullCellExporter {
         }
     }
 
-    public record ExportResult(Path metrics, Path timeSeries, Path radial, Path acceptance,
-                               double maximumStress, double averageStress, double stressP95,
-                               double averageX, double concentrationDelta, double massBalanceError,
-                               boolean massBalancePass, boolean quantitativeReady) {}
+    public static final class ExportResult {
+        private final Path metrics, timeSeries, radial, acceptance;
+        private final double maximumStress, averageStress, stressP95;
+        private final double averageX, concentrationDelta, massBalanceError;
+        private final boolean massBalancePass, quantitativeReady;
 
-    private record CurvePoint(double capacity, double voltage) {}
+        public ExportResult(Path metrics, Path timeSeries, Path radial, Path acceptance,
+                            double maximumStress, double averageStress, double stressP95,
+                            double averageX, double concentrationDelta, double massBalanceError,
+                            boolean massBalancePass, boolean quantitativeReady) {
+            this.metrics = metrics;
+            this.timeSeries = timeSeries;
+            this.radial = radial;
+            this.acceptance = acceptance;
+            this.maximumStress = maximumStress;
+            this.averageStress = averageStress;
+            this.stressP95 = stressP95;
+            this.averageX = averageX;
+            this.concentrationDelta = concentrationDelta;
+            this.massBalanceError = massBalanceError;
+            this.massBalancePass = massBalancePass;
+            this.quantitativeReady = quantitativeReady;
+        }
 
-    private record CurveValidation(boolean applicable, double voltageRmse, double capacityError) {
+        public Path metrics() { return metrics; }
+        public Path timeSeries() { return timeSeries; }
+        public Path radial() { return radial; }
+        public Path acceptance() { return acceptance; }
+        public double maximumStress() { return maximumStress; }
+        public double averageStress() { return averageStress; }
+        public double stressP95() { return stressP95; }
+        public double averageX() { return averageX; }
+        public double concentrationDelta() { return concentrationDelta; }
+        public double massBalanceError() { return massBalanceError; }
+        public boolean massBalancePass() { return massBalancePass; }
+        public boolean quantitativeReady() { return quantitativeReady; }
+    }
+
+    private static final class CurvePoint {
+        private final double capacity, voltage;
+        CurvePoint(double capacity, double voltage) {
+            this.capacity = capacity;
+            this.voltage = voltage;
+        }
+        double capacity() { return capacity; }
+        double voltage() { return voltage; }
+    }
+
+    private static final class CurveValidation {
+        private final boolean applicable;
+        private final double voltageRmse, capacityError;
+
+        CurveValidation(boolean applicable, double voltageRmse, double capacityError) {
+            this.applicable = applicable;
+            this.voltageRmse = voltageRmse;
+            this.capacityError = capacityError;
+        }
+
+        boolean applicable() { return applicable; }
+        double voltageRmse() { return voltageRmse; }
+        double capacityError() { return capacityError; }
+
         static CurveValidation notApplicable() {
             return new CurveValidation(false, Double.NaN, Double.NaN);
         }

@@ -22,13 +22,12 @@ public final class FigureExporter {
         model.result(plotTag).set("looplevelinput", "manual");
         model.result(plotTag).set("looplevel", new int[]{level});
         model.result().export().create(exportTag, "Image2D");
-        var image = model.result().export(exportTag);
-        image.set("plotgroup", plotTag);
-        image.set("pngfilename", PathUtils.comsolPath(file));
-        image.set("width", 1200);
-        image.set("height", 1000);
-        image.set("resolution", 150);
-        image.run();
+        model.result().export(exportTag).set("plotgroup", plotTag);
+        model.result().export(exportTag).set("pngfilename", PathUtils.comsolPath(file));
+        model.result().export(exportTag).set("width", 1200);
+        model.result().export(exportTag).set("height", 1000);
+        model.result().export(exportTag).set("resolution", 150);
+        model.result().export(exportTag).run();
     }
 
     private int nearestLevel(SimulationConfig config, double target) {

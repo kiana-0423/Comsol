@@ -6,6 +6,7 @@ import com.nfm.comsol.util.ComsolTagUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Collections;
 
 /** Central expression map; verify stress symbols in COMSOL 6.4 GUI before production. */
 public final class ResultBuilder {
@@ -35,10 +36,9 @@ public final class ResultBuilder {
 
     public void build(Model model, SimulationConfig config) {
         model.result().dataset().create(ComsolTagUtils.DATASET_CUTLINE, "CutLine2D");
-        var cut = model.result().dataset(ComsolTagUtils.DATASET_CUTLINE);
-        cut.set("point1", new String[]{"0", "0"});
-        cut.set("point2", new String[]{"Rp", "0"});
-        cut.set("numpoints", 101);
+        model.result().dataset(ComsolTagUtils.DATASET_CUTLINE).set("point1", new String[]{"0", "0"});
+        model.result().dataset(ComsolTagUtils.DATASET_CUTLINE).set("point2", new String[]{"Rp", "0"});
+        model.result().dataset(ComsolTagUtils.DATASET_CUTLINE).set("numpoints", 101);
 
         createSurfacePlot(model, "plot_concentration", "xNa", "1", "Normalized Na content",
                 Double.toString(config.concentrationScaleMin()), Double.toString(config.concentrationScaleMax()));
@@ -57,7 +57,9 @@ public final class ResultBuilder {
         model.result(tag).feature("surface").set("rangecolormax", max);
     }
 
-    public Map<String, String> expressions() { return Map.copyOf(expressions); }
+    public Map<String, String> expressions() {
+        return Collections.unmodifiableMap(new LinkedHashMap<String, String>(expressions));
+    }
 
     public void bindSolution(Model model, String mode) {
         String dataset = mode.equals("discharge") ? "dset2" : "dset1";

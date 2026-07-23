@@ -28,7 +28,8 @@ public final class FullCellSimulationRunner {
         snapshotInputs(material, cell, simulation, sensitivity, stem);
         Model model = null;
         try {
-            var built = builder.build(material, cell, simulation, options.cRate(), options.smokeTest(), sensitivity);
+            FullCellModelBuilder.BuiltFullCell built =
+                    builder.build(material, cell, simulation, options.cRate(), options.smokeTest(), sensitivity);
             model = built.model();
             Path mph = simulation.outputRoot().resolve("mph").resolve(stem + ".mph");
             if (options.buildOnly()) {
@@ -109,9 +110,59 @@ public final class FullCellSimulationRunner {
         }
     }
 
-    public record RunOptions(double cRate, String mode, boolean buildOnly, boolean smokeTest) {}
-    public record RunResult(String stem, Path mph, Path metrics, double maximumStress,
-                            double maximumAverageStress, double stressP95, double finalAverageX,
-                            double maximumConcentrationDelta, double massBalanceError,
-                            int elementCount, boolean quantitativeReady) {}
+    public static final class RunOptions {
+        private final double cRate;
+        private final String mode;
+        private final boolean buildOnly, smokeTest;
+
+        public RunOptions(double cRate, String mode, boolean buildOnly, boolean smokeTest) {
+            this.cRate = cRate;
+            this.mode = mode;
+            this.buildOnly = buildOnly;
+            this.smokeTest = smokeTest;
+        }
+
+        public double cRate() { return cRate; }
+        public String mode() { return mode; }
+        public boolean buildOnly() { return buildOnly; }
+        public boolean smokeTest() { return smokeTest; }
+    }
+
+    public static final class RunResult {
+        private final String stem;
+        private final Path mph, metrics;
+        private final double maximumStress, maximumAverageStress, stressP95, finalAverageX;
+        private final double maximumConcentrationDelta, massBalanceError;
+        private final int elementCount;
+        private final boolean quantitativeReady;
+
+        public RunResult(String stem, Path mph, Path metrics, double maximumStress,
+                         double maximumAverageStress, double stressP95, double finalAverageX,
+                         double maximumConcentrationDelta, double massBalanceError,
+                         int elementCount, boolean quantitativeReady) {
+            this.stem = stem;
+            this.mph = mph;
+            this.metrics = metrics;
+            this.maximumStress = maximumStress;
+            this.maximumAverageStress = maximumAverageStress;
+            this.stressP95 = stressP95;
+            this.finalAverageX = finalAverageX;
+            this.maximumConcentrationDelta = maximumConcentrationDelta;
+            this.massBalanceError = massBalanceError;
+            this.elementCount = elementCount;
+            this.quantitativeReady = quantitativeReady;
+        }
+
+        public String stem() { return stem; }
+        public Path mph() { return mph; }
+        public Path metrics() { return metrics; }
+        public double maximumStress() { return maximumStress; }
+        public double maximumAverageStress() { return maximumAverageStress; }
+        public double stressP95() { return stressP95; }
+        public double finalAverageX() { return finalAverageX; }
+        public double maximumConcentrationDelta() { return maximumConcentrationDelta; }
+        public double massBalanceError() { return massBalanceError; }
+        public int elementCount() { return elementCount; }
+        public boolean quantitativeReady() { return quantitativeReady; }
+    }
 }

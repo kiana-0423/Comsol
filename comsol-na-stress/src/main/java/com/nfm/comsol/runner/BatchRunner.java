@@ -11,13 +11,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class BatchRunner {
     private final SimulationRunner runner = new SimulationRunner();
 
     public void runAll(SimulationConfig simulation, SimulationRunner.RunOptions base) throws Exception {
-        for (String name : List.of("NFM", "NFMZC")) {
+        for (String name : Arrays.asList("NFM", "NFMZC")) {
             MaterialConfig material = ConfigLoader.loadMaterial(simulation.projectRoot(), name);
             List<SimulationRunner.RunResult> solved = new ArrayList<>();
             for (double rate : simulation.cRates()) {
@@ -39,8 +40,8 @@ public final class BatchRunner {
                                    double cRate, String mode) throws Exception {
         List<ConvergenceRow> rows = new ArrayList<>();
         Double previousStress = null;
-        for (String level : List.of("normal", "fine", "extra_fine")) {
-            var result = runner.run(material, simulation.withMeshLevel(level),
+        for (String level : Arrays.asList("normal", "fine", "extra_fine")) {
+            SimulationRunner.RunResult result = runner.run(material, simulation.withMeshLevel(level),
                     new SimulationRunner.RunOptions(cRate, mode, false, false, false));
             double change = previousStress == null ? Double.NaN
                     : Math.abs(result.maximumStress() - previousStress) / Math.max(Math.abs(previousStress), 1e-30);
@@ -67,6 +68,21 @@ public final class BatchRunner {
         }
     }
 
-    private record ConvergenceRow(String level, int elements, double maxStress, double averageX,
-                                  double surfaceCenterDelta, double relativeChange, boolean converged) {}
+    private static final class ConvergenceRow {
+        final String level;
+        final int elements;
+        final double maxStress, averageX, surfaceCenterDelta, relativeChange;
+        final boolean converged;
+
+        ConvergenceRow(String level, int elements, double maxStress, double averageX,
+                       double surfaceCenterDelta, double relativeChange, boolean converged) {
+            this.level = level;
+            this.elements = elements;
+            this.maxStress = maxStress;
+            this.averageX = averageX;
+            this.surfaceCenterDelta = surfaceCenterDelta;
+            this.relativeChange = relativeChange;
+            this.converged = converged;
+        }
+    }
 }

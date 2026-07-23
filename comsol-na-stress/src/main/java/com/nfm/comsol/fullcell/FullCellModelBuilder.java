@@ -34,5 +34,19 @@ public final class FullCellModelBuilder {
         return new BuiltFullCell(model, studies, results);
     }
 
-    public record BuiltFullCell(Model model, FullCellStudyBuilder studies, FullCellResultBuilder results) {}
+    public static final class BuiltFullCell {
+        private final Model model;
+        private final FullCellStudyBuilder studies;
+        private final FullCellResultBuilder results;
+
+        public BuiltFullCell(Model model, FullCellStudyBuilder studies, FullCellResultBuilder results) {
+            this.model = model;
+            this.studies = studies;
+            this.results = results;
+        }
+
+        public Model model() { return model; }
+        public FullCellStudyBuilder studies() { return studies; }
+        public FullCellResultBuilder results() { return results; }
+    }
 }

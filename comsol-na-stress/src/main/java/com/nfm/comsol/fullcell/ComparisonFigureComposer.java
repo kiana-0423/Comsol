@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** Creates publication-review NFM/NFMZC panels without external image dependencies. */
@@ -20,11 +21,12 @@ public final class ComparisonFigureComposer {
     public List<Path> compose(FullCellConfig cell, SimulationConfig simulation,
                               double cRate, String requestedMode) throws IOException {
         List<Path> outputs = new ArrayList<>();
-        List<String> phases = requestedMode.equals("cycle") ? List.of("charge", "discharge") : List.of(requestedMode);
+        List<String> phases = requestedMode.equals("cycle")
+                ? Arrays.asList("charge", "discharge") : Arrays.asList(requestedMode);
         for (String phase : phases) {
             List<Double> voltages = phase.equals("charge") ? cell.chargeSnapshotVoltages() : cell.dischargeSnapshotVoltages();
             for (double voltage : voltages) {
-                for (String field : List.of("concentration", "stress")) {
+                for (String field : Arrays.asList("concentration", "stress")) {
                     String v = Double.toString(voltage).replace('.', 'p');
                     String nfmStem = "FULLCELL_" + PathUtils.caseStem("NFM", requestedMode, cRate);
                     String nfmzcStem = "FULLCELL_" + PathUtils.caseStem("NFMZC", requestedMode, cRate);
@@ -41,7 +43,7 @@ public final class ComparisonFigureComposer {
                 }
             }
             for (double soc : cell.snapshotSocFractions()) {
-                for (String field : List.of("concentration", "stress")) {
+                for (String field : Arrays.asList("concentration", "stress")) {
                     String s = Double.toString(soc).replace('.', 'p');
                     String nfmStem = "FULLCELL_" + PathUtils.caseStem("NFM", requestedMode, cRate);
                     String nfmzcStem = "FULLCELL_" + PathUtils.caseStem("NFMZC", requestedMode, cRate);
