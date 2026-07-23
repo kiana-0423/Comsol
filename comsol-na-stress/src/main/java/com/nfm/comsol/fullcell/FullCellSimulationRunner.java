@@ -114,13 +114,4 @@ public final class FullCellSimulationRunner {
                             double maximumAverageStress, double stressP95, double finalAverageX,
                             double maximumConcentrationDelta, double massBalanceError,
                             int elementCount, boolean quantitativeReady) {}
-    public record SensitivityCase(String name, double chargeDiffusionScale,
-                                  double dischargeDiffusionScale, double strainScale,
-                                  double modulusScale, double poissonScale,
-                                  double radiusScale, double positiveKineticsScale,
-                                  double negativeKineticsScale) {
-        public static SensitivityCase baseline() {
-            return new SensitivityCase("baseline", 1, 1, 1, 1, 1, 1, 1, 1);
-        }
-    }
 }

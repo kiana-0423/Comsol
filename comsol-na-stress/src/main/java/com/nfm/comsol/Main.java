@@ -7,6 +7,7 @@ import com.nfm.comsol.config.SimulationConfig;
 import com.nfm.comsol.config.FullCellConfig;
 import com.nfm.comsol.fullcell.FullCellBatchRunner;
 import com.nfm.comsol.fullcell.FullCellSimulationRunner;
+import com.nfm.comsol.fullcell.SensitivityCase;
 import com.nfm.comsol.runner.BatchRunner;
 import com.nfm.comsol.runner.SimulationRunner;
 import com.nfm.comsol.util.PathUtils;
@@ -59,7 +60,7 @@ public final class Main {
                                 + batch.runAttribution(cell, simulation, cli.cRate, mode));
                     } else {
                         new FullCellSimulationRunner().run(material, cell, simulation, options,
-                                FullCellSimulationRunner.SensitivityCase.baseline());
+                                SensitivityCase.baseline());
                     }
                 }
                 return;

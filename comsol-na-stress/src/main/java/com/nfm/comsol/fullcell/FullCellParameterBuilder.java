@@ -7,7 +7,7 @@ import com.nfm.comsol.config.MaterialConfig;
 /** Defines all geometry, electrochemical, mechanics and acceptance parameters in SI units. */
 public final class FullCellParameterBuilder {
     public void build(Model model, MaterialConfig m, FullCellConfig c, double cRate,
-                      FullCellSimulationRunner.SensitivityCase sensitivity) {
+                      SensitivityCase sensitivity) {
         model.param().set("L_an_base", c.anodeLength(), "Anode representative-cell length [provisional geometry]");
         model.param().set("L_sep_base", c.separatorLength(), "Separator length [provisional geometry]");
         model.param().set("L_ca_base", c.cathodeLength(), "Cathode representative-cell length [provisional geometry]");
