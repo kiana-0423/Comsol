@@ -131,14 +131,27 @@ public final class ValidationUtils {
                 .selection(ComsolTagUtils.NEGATIVE_PARTICLES).entities(3).length;
         int separator = model.component(ComsolTagUtils.FULL_COMPONENT)
                 .selection(ComsolTagUtils.SEPARATOR_DOMAIN).entities(3).length;
+        int anodeMatrix = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.ANODE_MATRIX).entities(3).length;
+        int cathodeMatrix = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.CATHODE_MATRIX).entities(3).length;
+        int negativeSurfaces = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.NEGATIVE_SURFACES).entities(2).length;
+        int positiveSurfaces = model.component(ComsolTagUtils.FULL_COMPONENT)
+                .selection(ComsolTagUtils.POSITIVE_SURFACE).entities(2).length;
         int positiveCollector = model.component(ComsolTagUtils.FULL_COMPONENT)
                 .selection(ComsolTagUtils.POSITIVE_COLLECTOR).entities(2).length;
         int negativeCollector = model.component(ComsolTagUtils.FULL_COMPONENT)
                 .selection(ComsolTagUtils.NEGATIVE_COLLECTOR).entities(2).length;
         require(positive == 1, "full cell must contain exactly one positive particle, got " + positive);
         require(negative == 4, "full cell must contain four hard-carbon particles, got " + negative);
-        require(separator > 0, "separator selection is empty");
-        require(positiveCollector > 0 && negativeCollector > 0, "current collector boundary selection is empty");
+        require(anodeMatrix == 1, "anode matrix must be one connected domain, got " + anodeMatrix);
+        require(separator == 1, "separator must be one connected domain, got " + separator);
+        require(cathodeMatrix == 1, "cathode matrix must be one connected domain, got " + cathodeMatrix);
+        require(negativeSurfaces >= 4, "hard-carbon particle surface selection is incomplete");
+        require(positiveSurfaces >= 1, "positive-particle surface selection is empty");
+        require(positiveCollector == 1, "positive collector must be one boundary, got " + positiveCollector);
+        require(negativeCollector == 1, "negative collector must be one boundary, got " + negativeCollector);
     }
 
     public static void requireFinite(String name, double value) {

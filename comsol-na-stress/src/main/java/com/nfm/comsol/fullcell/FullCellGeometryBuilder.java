@@ -6,7 +6,10 @@ import com.nfm.comsol.util.ComsolTagUtils;
 import java.util.List;
 import java.util.Arrays;
 
-/** Reconstructs the supplied three-block heterogeneous cell with explicit spherical particles. */
+/**
+ * Reconstructs the supplied reference geometry: anode | separator | cathode
+ * blocks, four staggered hard-carbon spheres and one centered cathode sphere.
+ */
 public final class FullCellGeometryBuilder {
     public void build(Model model) {
         model.component().create(ComsolTagUtils.FULL_COMPONENT, true);
@@ -16,10 +19,10 @@ public final class FullCellGeometryBuilder {
         block(model, "separator_block", "L_an", "L_sep");
         block(model, "cathode_block", "L_an+L_sep", "L_ca");
 
-        sphere(model, "hc_1", "0.267*L_an", "0.267*W_cell", "0.5*H_cell", "Rp_neg_large");
-        sphere(model, "hc_2", "0.733*L_an", "0.733*W_cell", "0.5*H_cell", "Rp_neg_large");
-        sphere(model, "hc_3", "0.244*L_an", "0.744*W_cell", "0.5*H_cell", "Rp_neg_small");
-        sphere(model, "hc_4", "0.756*L_an", "0.244*W_cell", "0.5*H_cell", "Rp_neg_small");
+        sphere(model, "hc_1", "x_hc_1", "y_hc_1", "z_hc_1", "Rp_neg_large");
+        sphere(model, "hc_2", "x_hc_2", "y_hc_2", "z_hc_2", "Rp_neg_large");
+        sphere(model, "hc_3", "x_hc_3", "y_hc_3", "z_hc_3", "Rp_neg_small");
+        sphere(model, "hc_4", "x_hc_4", "y_hc_4", "z_hc_4", "Rp_neg_small");
         sphere(model, "positive_particle", "L_an+L_sep+L_ca/2", "W_cell/2", "H_cell/2", "Rp_pos");
         model.component(ComsolTagUtils.FULL_COMPONENT).geom(ComsolTagUtils.FULL_GEOMETRY).run();
 

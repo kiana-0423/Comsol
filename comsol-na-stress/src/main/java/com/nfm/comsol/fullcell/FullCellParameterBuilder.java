@@ -26,6 +26,22 @@ public final class FullCellParameterBuilder {
         model.param().set("Rp_neg_small_base", c.negativeSmallRadius());
         model.param().set("Rp_neg_large", "Rp_neg_large_base*radiusScale");
         model.param().set("Rp_neg_small", "Rp_neg_small_base*radiusScale");
+        // Three-dimensional staggered hard-carbon layout reconstructed from
+        // the supplied reference figure. Keeping the coordinates as model
+        // parameters makes the GUI geometry auditable and preserves the same
+        // relative layout when radiusScale is used.
+        model.param().set("x_hc_1", "0.300*L_an", "Large HC particle 1 center x");
+        model.param().set("y_hc_1", "0.300*W_cell", "Large HC particle 1 center y");
+        model.param().set("z_hc_1", "0.478*H_cell", "Large HC particle 1 center z");
+        model.param().set("x_hc_2", "0.700*L_an", "Large HC particle 2 center x");
+        model.param().set("y_hc_2", "0.700*W_cell", "Large HC particle 2 center y");
+        model.param().set("z_hc_2", "0.522*H_cell", "Large HC particle 2 center z");
+        model.param().set("x_hc_3", "0.244*L_an", "Small HC particle 3 center x");
+        model.param().set("y_hc_3", "0.756*W_cell", "Small HC particle 3 center y");
+        model.param().set("z_hc_3", "0.244*H_cell", "Small HC particle 3 center z");
+        model.param().set("x_hc_4", "0.756*L_an", "Small HC particle 4 center x");
+        model.param().set("y_hc_4", "0.244*W_cell", "Small HC particle 4 center y");
+        model.param().set("z_hc_4", "0.756*H_cell", "Small HC particle 4 center z");
 
         model.param().set("rho_pos", m.density());
         // Material property files are shared with the retained 2D particle
