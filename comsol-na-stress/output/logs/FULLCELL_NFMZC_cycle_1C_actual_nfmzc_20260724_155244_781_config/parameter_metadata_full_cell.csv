@@ -1,0 +1,28 @@
+parameter,value,unit,status,source,relative_uncertainty
+geometry_classification,representative-microstructure,1,provisional,user-confirmed local RVE interpretation,0
+anode_length,9,um,provisional,reconstructed representative geometry,0.15
+separator_length,3,um,provisional,reconstructed representative geometry,0.15
+cathode_length,6,um,provisional,reconstructed representative geometry,0.15
+electrolyte_initial_concentration,1,M,provisional,parameters.docx legacy COMSOL model,0.10
+electrolyte_conductivity_at_1M,0.882,S/m,provisional,digitized from parameters.docx sigmal graph,0.15
+electrolyte_diffusivity,1.5e-10,m2/s,provisional,user-supplied trend-model baseline; verify COMSOL diffusivity definition,0.50
+electrolyte_transference_number,0.40,1,provisional,user-supplied trend-model baseline; sensitivity 0.30-0.50,0.25
+charge_transfer_alpha,0.5,1,provisional,parameters.docx legacy COMSOL model symmetric-reaction assumption,0.20
+hard_carbon_csmax,14.54,kmol/m3,provisional,parameters.docx legacy COMSOL model,0.30
+hard_carbon_initial_x,0.007,1,provisional,parameters.docx legacy COMSOL model,0.30
+hard_carbon_diffusivity,0.3e-15-2.0e-15,m2/s,provisional,digitized from parameters.docx Ds_n graph and normalized by csmax,0.35
+hard_carbon_young_modulus,15,GPa,provisional,user-supplied trend-model baseline; sensitivity 8-30 GPa,0.50
+hard_carbon_poisson_ratio,0.25,1,provisional,user-supplied trend-model baseline; sensitivity 0.20-0.30,0.20
+hard_carbon_chemical_expansion_beta,0.025,1,provisional,user-supplied trend-model baseline; inactive in current positive-only mechanics,0.60
+hard_carbon_exchange_current_density,3,A/m2,provisional,user-supplied calibration baseline; sensitivity 0.5-15 A/m2,0.8333
+binder_conductivity,10,S/m,provisional,parameters.docx legacy COMSOL model,0.40
+binder_young_modulus,0.3,GPa,provisional,user-supplied porous-equivalent binder baseline,0.6667
+binder_poisson_ratio,0.32,1,provisional,user-supplied porous-equivalent binder baseline,0.0938
+separator_young_modulus,0.35,GPa,provisional,user-supplied polyolefin separator baseline; sensitivity 0.20-0.50 GPa,0.4286
+separator_poisson_ratio,0.30,1,provisional,user-supplied isotropic separator baseline; sensitivity 0.20-0.40,0.3333
+anode_porosity,0.35,1,provisional,user-supplied representative porous-electrode baseline,0.20
+cathode_porosity,0.30,1,provisional,user-supplied representative porous-electrode baseline,0.20
+separator_porosity,0.45,1,provisional,user-supplied representative separator baseline,0.15
+anode_tortuosity,1.69,1,provisional,Bruggeman estimate epsilon^-0.5 from porosity 0.35,0.20
+cathode_tortuosity,1.83,1,provisional,Bruggeman estimate epsilon^-0.5 from porosity 0.30,0.20
+separator_tortuosity,1.49,1,provisional,Bruggeman estimate epsilon^-0.5 from porosity 0.45,0.20

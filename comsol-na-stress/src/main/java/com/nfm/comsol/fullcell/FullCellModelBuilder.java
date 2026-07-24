@@ -19,6 +19,7 @@ public final class FullCellModelBuilder {
 
     public BuiltFullCell build(MaterialConfig material, FullCellConfig cell, SimulationConfig simulation,
                                double cRate, boolean smokeTest,
+                               boolean transitionSmokeTest,
                                SensitivityCase sensitivity) {
         Model model = ModelUtil.create("FullCellModel");
         model.label(material.name() + " 3D heterogeneous Na full-cell model");
@@ -28,7 +29,7 @@ public final class FullCellModelBuilder {
         definitions.build(model, material, cell);
         physics.build(model);
         mesh.build(model, simulation, cell, smokeTest);
-        studies.build(model, simulation, smokeTest);
+        studies.build(model, simulation, smokeTest, transitionSmokeTest);
         results.build(model, simulation, material, cell);
         ValidationUtils.validateFullCellModel(model);
         return new BuiltFullCell(model, studies, results);

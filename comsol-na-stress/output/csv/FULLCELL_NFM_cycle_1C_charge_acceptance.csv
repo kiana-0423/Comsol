@@ -1,6 +1,6 @@
 check,value,limit,pass
-mass_balance_relative_error,1.2899857115099782E-4,0.01,true
-cutoff_voltage_error_V,0.01721932818651961,0.05,true
+mass_balance_relative_error,2.4006957033642705E-4,0.01,true
+cutoff_voltage_error_V,0.0028800402997068986,0.05,true
 positive_xNa_monotonic,true,1,true
 initial_maximum_stress_Pa,2.934208200658514E-21,1000.0,true
 initial_zero_stress_applicable,true,1,true

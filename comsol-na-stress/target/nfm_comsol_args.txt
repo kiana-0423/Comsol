@@ -1,8 +1,9 @@
 --model
 full-cell
+--build-only
 --material
-NFMZC
+NFM
 --c-rate
 1
 --mode
-charge
+cycle

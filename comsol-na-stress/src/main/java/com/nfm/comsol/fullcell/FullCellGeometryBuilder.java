@@ -104,5 +104,9 @@ public final class FullCellGeometryBuilder {
         model.component(ComsolTagUtils.FULL_COMPONENT).selection(tag).set("ymax", ymax);
         model.component(ComsolTagUtils.FULL_COMPONENT).selection(tag).set("zmin", zmin);
         model.component(ComsolTagUtils.FULL_COMPONENT).selection(tag).set("zmax", zmax);
+        // The default "intersects" condition also catches the four side faces
+        // that merely touch an end-plane box. Requiring the complete boundary
+        // to lie inside the box leaves exactly the collector end face.
+        model.component(ComsolTagUtils.FULL_COMPONENT).selection(tag).set("condition", "inside");
     }
 }

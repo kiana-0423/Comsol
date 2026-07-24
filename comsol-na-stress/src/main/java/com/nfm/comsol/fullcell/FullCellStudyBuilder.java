@@ -12,17 +12,24 @@ import java.util.stream.Collectors;
 
 /** Initialization followed by charge/discharge; mechanics is one-way and quasi-static in intent. */
 public final class FullCellStudyBuilder {
-    public void build(Model model, SimulationConfig config, boolean smokeTest) {
+    public void build(Model model, SimulationConfig config, boolean smokeTest,
+                      boolean transitionSmokeTest) {
         model.study().create(ComsolTagUtils.FULL_STUDY_INIT);
         model.study(ComsolTagUtils.FULL_STUDY_INIT).label("Current distribution initialization");
         model.study(ComsolTagUtils.FULL_STUDY_INIT).create("init", "CurrentDistributionInitialization");
         activate(model, ComsolTagUtils.FULL_STUDY_INIT, "init", true, false, false);
 
-        transientStudy(model, ComsolTagUtils.FULL_STUDY_CHARGE, "Charge 2.7-4.3 V", config, smokeTest);
-        transientStudy(model, ComsolTagUtils.FULL_STUDY_DISCHARGE, "Discharge 4.3-2.0 V", config, smokeTest);
+        // A transition smoke test deliberately performs a complete charge so
+        // the short discharge starts from the same cutoff state that failed in
+        // the former 1C cycle. The ordinary smoke test keeps both legs short.
+        transientStudy(model, ComsolTagUtils.FULL_STUDY_CHARGE, "Charge 2.7-4.3 V",
+                config, smokeTest && !transitionSmokeTest, false);
+        transientStudy(model, ComsolTagUtils.FULL_STUDY_DISCHARGE, "Discharge 4.3-2.0 V",
+                config, smokeTest, transitionSmokeTest);
     }
 
-    private void transientStudy(Model model, String tag, String label, SimulationConfig config, boolean smokeTest) {
+    private void transientStudy(Model model, String tag, String label, SimulationConfig config,
+                                boolean smokeTest, boolean transitionDischarge) {
         model.study().create(tag);
         model.study(tag).label(label);
         if (tag.equals(ComsolTagUtils.FULL_STUDY_CHARGE)) {
@@ -31,8 +38,11 @@ public final class FullCellStudyBuilder {
         }
         model.study(tag).create("time", "Transient");
         activate(model, tag, "time", true, true, true);
-        String tlist = smokeTest ? "range(0,0.005[s],0.01[s])" : config.outputFractions().stream()
-                .map(v -> v + "*t_nominal").collect(Collectors.joining(" "));
+        String tlist = transitionDischarge
+                ? "range(0,1[s],20[s])"
+                : smokeTest ? "range(0,0.005[s],0.01[s])"
+                : config.outputFractions().stream()
+                        .map(v -> v + "*t_nominal").collect(Collectors.joining(" "));
         model.study(tag).feature("time").set("tlist", tlist);
         model.study(tag).feature("time").set("usertol", true);
         model.study(tag).feature("time").set("rtol", Double.toString(config.relativeTolerance()));

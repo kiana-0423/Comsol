@@ -24,7 +24,9 @@ public final class FullCellSimulationRunner {
         PathUtils.ensureOutputTree(simulation.outputRoot());
         String mode = options.mode().equals("cycle") ? "cycle" : options.mode();
         String stem = "FULLCELL_" + PathUtils.caseStem(material.name(), mode, options.cRate())
-                + (sensitivity.name().equals("baseline") ? "" : "_" + sensitivity.name());
+                + (sensitivity.name().equals("baseline") ? "" : "_" + sensitivity.name())
+                + (options.buildOnly() ? "_build_only" : "")
+                + (options.transitionSmokeTest() ? "_transition_smoke" : "");
         Path mph = simulation.outputRoot().resolve("mph").resolve(stem + ".mph");
         snapshotInputs(material, cell, simulation, sensitivity, stem);
         Model model = null;
@@ -50,7 +52,8 @@ public final class FullCellSimulationRunner {
                         exported.quantitativeReady());
             }
             FullCellModelBuilder.BuiltFullCell built =
-                    builder.build(material, cell, simulation, options.cRate(), options.smokeTest(), sensitivity);
+                    builder.build(material, cell, simulation, options.cRate(),
+                            options.smokeTest(), options.transitionSmokeTest(), sensitivity);
             model = built.model();
             if (options.buildOnly()) {
                 model.save(PathUtils.comsolPath(mph));
@@ -168,7 +171,7 @@ public final class FullCellSimulationRunner {
     public static final class RunOptions {
         private final double cRate;
         private final String mode;
-        private final boolean buildOnly, exportOnly, smokeTest;
+        private final boolean buildOnly, exportOnly, smokeTest, transitionSmokeTest;
 
         public RunOptions(double cRate, String mode, boolean buildOnly, boolean smokeTest) {
             this(cRate, mode, buildOnly, false, smokeTest);
@@ -176,11 +179,18 @@ public final class FullCellSimulationRunner {
 
         public RunOptions(double cRate, String mode, boolean buildOnly,
                           boolean exportOnly, boolean smokeTest) {
+            this(cRate, mode, buildOnly, exportOnly, smokeTest, false);
+        }
+
+        public RunOptions(double cRate, String mode, boolean buildOnly,
+                          boolean exportOnly, boolean smokeTest,
+                          boolean transitionSmokeTest) {
             this.cRate = cRate;
             this.mode = mode;
             this.buildOnly = buildOnly;
             this.exportOnly = exportOnly;
             this.smokeTest = smokeTest;
+            this.transitionSmokeTest = transitionSmokeTest;
         }
 
         public double cRate() { return cRate; }
@@ -188,6 +198,7 @@ public final class FullCellSimulationRunner {
         public boolean buildOnly() { return buildOnly; }
         public boolean exportOnly() { return exportOnly; }
         public boolean smokeTest() { return smokeTest; }
+        public boolean transitionSmokeTest() { return transitionSmokeTest; }
     }
 
     public static final class RunResult {

@@ -48,7 +48,8 @@ public final class Main {
                 FullCellBatchRunner batch = new FullCellBatchRunner();
                 FullCellSimulationRunner.RunOptions options =
                         new FullCellSimulationRunner.RunOptions(
-                                cli.cRate, mode, cli.buildOnly, cli.exportOnly, cli.smokeTest);
+                                cli.cRate, mode, cli.buildOnly, cli.exportOnly,
+                                cli.smokeTest, cli.transitionSmokeTest);
                 if (cli.all) {
                     System.out.println("Full-cell summary: " + batch.runAll(cell, simulation, options));
                 } else {
@@ -127,6 +128,7 @@ public final class Main {
         boolean buildOnly;
         boolean exportOnly;
         boolean smokeTest;
+        boolean transitionSmokeTest;
         boolean meshConvergence;
         boolean parameterSensitivity;
         boolean parameterAttribution;
@@ -147,6 +149,10 @@ public final class Main {
                     case "--solve": break; // solve is the default explicit action
                     case "--export-only": c.exportOnly = true; break;
                     case "--smoke-test": c.smokeTest = true; break;
+                    case "--transition-smoke-test":
+                        c.smokeTest = true;
+                        c.transitionSmokeTest = true;
+                        break;
                     case "--mesh-convergence": c.meshConvergence = true; break;
                     case "--parameter-sensitivity": c.parameterSensitivity = true; break;
                     case "--parameter-attribution": c.parameterAttribution = true; break;
@@ -173,6 +179,9 @@ public final class Main {
             if (c.model.equals("particle") && (c.parameterSensitivity || c.parameterAttribution || c.timeConvergence)) {
                 throw new IllegalArgumentException("sensitivity, attribution, and time convergence require --model full-cell");
             }
+            if (c.transitionSmokeTest && !c.model.equals("full-cell")) {
+                throw new IllegalArgumentException("--transition-smoke-test requires --model full-cell");
+            }
             if (c.meshConvergence && (c.all || c.buildOnly || c.exportOnly || c.smokeTest || c.timeConvergence)) {
                 throw new IllegalArgumentException("--mesh-convergence cannot be combined with --all/build-only/export-only/smoke-test");
             }
@@ -186,7 +195,14 @@ public final class Main {
                     || c.meshConvergence || c.timeConvergence)) {
                 throw new IllegalArgumentException("--parameter-attribution cannot be combined with batch/build/export/smoke/convergence");
             }
-            if (c.smokeTest) { c.material = "NFM"; c.cRate = 1.0; c.mode = "charge"; }
+            if (c.smokeTest) {
+                // Ordinary smoke remains the fixed NFM baseline. A transition
+                // smoke may explicitly select NFMZC to qualify its independent
+                // charge-cutoff -> discharge handoff.
+                if (!c.transitionSmokeTest) c.material = "NFM";
+                c.cRate = 1.0;
+                c.mode = c.transitionSmokeTest ? "cycle" : "charge";
+            }
             return c;
         }
 
@@ -200,6 +216,7 @@ public final class Main {
                     + "  --model particle|full-cell --material NFM|NFMZC --c-rate 0.1|1\n"
                     + "  --mode charge|discharge|cycle\n"
                     + "  --all | --build-only | --solve | --export-only | --smoke-test\n"
+                    + "  --transition-smoke-test (short charge -> discharge handoff)\n"
                     + "  --mesh-convergence | --time-convergence | --parameter-sensitivity | --parameter-attribution\n"
                     + "  --config config/simulation.properties --full-cell-config config/full_cell.properties");
         }
